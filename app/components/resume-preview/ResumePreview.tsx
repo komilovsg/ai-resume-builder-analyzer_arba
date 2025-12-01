@@ -312,6 +312,7 @@ export default function ResumePreview({ resumeData, onContentRef }: ResumePrevie
         position: "right",
         style: {
           background: "linear-gradient(to right, #00b09b, #96c93d)",
+          borderRadius: "1rem",
         },
       }).showToast();
     } catch (error) {
@@ -330,6 +331,7 @@ export default function ResumePreview({ resumeData, onContentRef }: ResumePrevie
         position: "right",
         style: {
           background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+          borderRadius: "1rem",
         },
       }).showToast();
     } finally {

@@ -141,7 +141,7 @@ export default function Resume() {
                 <Details feedback={feedback} />
             </div>
           ): (
-            <img src="/images/resume-scan-2.gif" alt="search" className="w-full" />
+            <img src="/images/resume-scan-2.gif" alt="search" className="w-full md:scale-50 scale-100 mx-auto" />
           )
 
           }

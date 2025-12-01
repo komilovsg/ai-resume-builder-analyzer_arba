@@ -143,7 +143,7 @@ export default function Upload() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                                        {/* <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div> */}
                                         <img src='/images/resume-scan.gif' className="w-1/2 mx-auto max-w-md" alt="Processing" />
                                     </div>
                                 )}

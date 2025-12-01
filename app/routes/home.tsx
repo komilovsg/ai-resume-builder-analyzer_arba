@@ -114,6 +114,7 @@ export default function Home() {
           type === "success"
             ? "linear-gradient(135deg, #36cfc9, #6dd178)"
             : "linear-gradient(135deg, #ff5f6d, #ffc371)",
+        borderRadius: "1rem",
       },
     }).showToast();
   };
@@ -300,6 +301,7 @@ export default function Home() {
             {oldResumes.length > 0 && (
               <div className="w-full">
                 <h2 className="text-2xl font-bold mb-4 text-center">{t('home.analyzedResumes')}</h2>
+                <hr className="mb-6 border-gray-300 md:w-[80%] w-full mx-auto" />
                 <div className="resumes-section">
                   {oldResumes.map((resume) => (
                     <ResumeCard
@@ -316,6 +318,7 @@ export default function Home() {
             {newResumes.length > 0 && (
               <div className="w-full mt-8">
                 <h2 className="text-2xl font-bold mb-4 text-center">{t('home.createdResumes')}</h2>
+                <hr className="mb-6 border-gray-300 md:w-[80%] w-full mx-auto" />
                 <div className="resumes-section">
                   {newResumes.map((resume) => (
                     <ResumeCardNew

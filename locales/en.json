@@ -184,7 +184,8 @@
       "finish": "Finish and Preview",
       "fillAll": "Fill all fields",
       "enterTitleFirst": "Please fill in resume title",
-      "saveError": "Error saving resume. Please try again."
+      "saveError": "Error saving resume. Please try again.",
+      "saveSuccess": "Resume created successfully!"
     }
   },
   "preview": {
@@ -209,7 +210,9 @@
     "exportPDF": "Export to PDF",
     "exporting": "Exporting...",
     "notFound": "Resume not found",
-    "loadError": "Error loading resume"
+    "loadError": "Error loading resume",
+    "evaluateSuccess": "Resume evaluated successfully!",
+    "evaluateError": "Failed to evaluate resume"
   },
   "upload": {
     "title": "Smart feedback for your dream job",
@@ -233,7 +236,9 @@
     "errorConvertPDF": "Error: Failed to convert PDF to image",
     "errorUploadImage": "Error: Failed to upload image",
     "errorAnalyzeResume": "Error: Failed to analyze resume",
-    "errorUnexpected": "An unexpected error occurred"
+    "errorUnexpected": "An unexpected error occurred",
+    "analyzeSuccess": "Resume analyzed successfully!",
+    "analyzeError": "Failed to analyze resume"
   },
   "resumeReview": {
     "backToHomepage": "Back to Homepage",

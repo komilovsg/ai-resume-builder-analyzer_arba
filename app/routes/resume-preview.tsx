@@ -7,6 +7,8 @@ import { generateUUID } from "~/lib/utils";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import Icon from "~/components/Icon";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export function meta() {
   return [
@@ -165,7 +167,18 @@ export default function ResumePreviewPage() {
       const uploadedPdf = await fs.upload([pdfFile]);
       const uploadedImage = await fs.upload([imageFile]);
       if (!uploadedPdf || !uploadedImage) {
-        throw new Error(t('preview.uploadError'));
+        const errorMsg = t('preview.uploadError');
+        Toastify({
+          text: errorMsg,
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          style: {
+            background: "linear-gradient(135deg, #ff5f6d, #ffc371)",
+            borderRadius: "1rem",
+          },
+        }).showToast();
+        throw new Error(errorMsg);
       }
 
       const evaluationId = generateUUID();
@@ -195,7 +208,18 @@ export default function ResumePreviewPage() {
       });
       const feedbackResponse = await ai.feedback(uploadedPdf.path, instructions);
       if (!feedbackResponse) {
-        throw new Error(t('preview.aiError'));
+        const errorMsg = t('preview.aiError');
+        Toastify({
+          text: errorMsg,
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          style: {
+            background: "linear-gradient(135deg, #ff5f6d, #ffc371)",
+            borderRadius: "1rem",
+          },
+        }).showToast();
+        throw new Error(errorMsg);
       }
 
       const feedbackText =
@@ -212,13 +236,37 @@ export default function ResumePreviewPage() {
       await kv.set(`resume:${evaluationId}`, JSON.stringify(analysisRecord));
       setEvaluationStatus(t('preview.redirecting'));
       setIsEvaluating(false);
+      
+      // Show success notification
+      Toastify({
+        text: t('preview.evaluateSuccess'),
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "linear-gradient(135deg, #36cfc9, #6dd178)",
+          borderRadius: "1rem",
+        },
+      }).showToast();
+      
       navigate(`/resume/${evaluationId}`);
     } catch (error) {
       console.error(error);
-      setEvaluationStatus(
-        error instanceof Error ? error.message : t('preview.error')
-      );
+      const errorMessage = error instanceof Error ? error.message : t('preview.error');
+      setEvaluationStatus(errorMessage);
       setIsEvaluating(false);
+      
+      // Show error notification
+      Toastify({
+        text: `${t('preview.evaluateError')}: ${errorMessage}`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "linear-gradient(135deg, #ff5f6d, #ffc371)",
+          borderRadius: "1rem",
+        },
+      }).showToast();
     }
   };
 

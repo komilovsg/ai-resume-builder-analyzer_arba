@@ -4,6 +4,8 @@ import { useResumeStore } from "~/lib/resume-store";
 import { useNavigate } from "react-router";
 import { usePuterStore } from "~/lib/puter";
 import { useTranslation } from "react-i18next";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default function StepRecommendations() {
   const { resumeData, addRecommendation, removeRecommendation, prevStep, initializeResume } =
@@ -69,11 +71,32 @@ export default function StepRecommendations() {
       // Save to KV store
       await kv.set(`resume:${finalResume.id}`, JSON.stringify(finalResume));
       
+      // Show success notification
+      Toastify({
+        text: t('wizard.recommendations.saveSuccess'),
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "linear-gradient(135deg, #36cfc9, #6dd178)",
+          borderRadius: "1rem",
+        },
+      }).showToast();
+      
       // Navigate to preview
       navigate(`/resume/${finalResume.id}/preview`);
     } catch (error) {
       console.error("Error saving resume:", error);
-      alert(t('wizard.recommendations.saveError'));
+      Toastify({
+        text: t('wizard.recommendations.saveError'),
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "linear-gradient(135deg, #ff5f6d, #ffc371)",
+          borderRadius: "1rem",
+        },
+      }).showToast();
     }
   };
 

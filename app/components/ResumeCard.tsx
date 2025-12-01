@@ -56,7 +56,7 @@ const ResumeCard = ({
         onClick={handleDeleteClick}
         disabled={isDeleting}
         title="Удалить резюме"
-        className="absolute -top-3 -right-3 z-10 rounded-full bg-white/90 border border-red-200 text-red-600 shadow-lg p-2 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
+        className="absolute -top-3 -right-3 z-10 rounded-full bg-white/90 border border-red-200 text-red-600 shadow-lg p-2 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto cursor-pointer"
       >
         {isDeleting ? (
           <span className="block w-4 h-4 border-2 border-red-200 border-t-red-500 rounded-full animate-spin" />

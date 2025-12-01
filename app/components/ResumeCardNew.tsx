@@ -72,7 +72,7 @@ export default function ResumeCardNew({
           type="button"
           onClick={handleEditClick}
           title="Редактировать резюме"
-          className="rounded-full bg-white/90 border border-blue-200 text-blue-600 shadow-lg p-2 hover:bg-blue-50 transition"
+          className="rounded-full bg-white/90 border border-blue-200 text-blue-600 shadow-lg p-2 hover:bg-blue-50 transition cursor-pointer"
         >
           <span aria-hidden="true">✎</span>
         </button>
@@ -81,7 +81,7 @@ export default function ResumeCardNew({
           onClick={handleDeleteClick}
           disabled={isDeleting}
           title="Удалить резюме"
-          className="rounded-full bg-white/90 border border-red-200 text-red-600 shadow-lg p-2 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-white/90 border border-red-200 text-red-600 shadow-lg p-2 hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isDeleting ? (
             <span className="block w-4 h-4 border-2 border-red-200 border-t-red-500 rounded-full animate-spin" />

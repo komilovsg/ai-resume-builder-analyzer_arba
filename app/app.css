@@ -702,3 +702,8 @@ form {
     transform: translateY(0);
   }
 }
+
+/* Toastify notification styles - скруглённые углы как у карточек */
+.toastify {
+  border-radius: 1rem !important;
+}
