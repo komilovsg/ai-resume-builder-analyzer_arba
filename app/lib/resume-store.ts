@@ -365,14 +365,18 @@ export const useResumeStore = create<ResumeBuilderState>((set, get) => ({
   initializeResume: (id?: string) => {
     const resumeId = id || generateUUID();
     const now = new Date().toISOString();
-    set((state) => ({
-      resumeData: {
-        ...state.resumeData,
-        id: resumeId,
-        createdAt: now,
-        updatedAt: now,
-      },
-    }));
+    set((state) => {
+      const newState = {
+        resumeData: {
+          ...state.resumeData,
+          id: resumeId,
+          createdAt: now,
+          updatedAt: now,
+        },
+      };
+      saveToStorage({ ...get(), ...newState }, get);
+      return newState;
+    });
   },
 
   hydrateResume: (resume: ResumeData) => {

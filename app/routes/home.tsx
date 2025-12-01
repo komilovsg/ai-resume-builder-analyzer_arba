@@ -248,7 +248,7 @@ export default function Home() {
               </p>
             </div>
             <div className="home-cta__actions">
-              <Link to="/create" className="primary-button home-cta__btn home-cta__btn--primary">
+              <Link to="/create?new=true" className="primary-button home-cta__btn home-cta__btn--primary">
                 <span className="home-cta__icon" aria-hidden="true">
                   <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
                     <path

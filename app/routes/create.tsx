@@ -35,6 +35,7 @@ export default function Create() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resumeId = searchParams.get("resumeId");
+  const isNew = searchParams.get("new") === "true";
   const { resumeData, initializeResume, hydrateResume, reset } = useResumeStore();
   const [isLoadingExisting, setIsLoadingExisting] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -45,17 +46,21 @@ export default function Create() {
     }
   }, [auth.isAuthenticated, isLoading, navigate]);
 
-  // Создание нового резюме - очищаем старое состояние
+  // Создание нового резюме
   useEffect(() => {
     if (!resumeId) {
-      // При создании нового резюме всегда сбрасываем старое состояние
-      // Это очистит localStorage и начнет с чистого листа
-      reset();
-      initializeResume();
+      if (isNew) {
+        // При явном создании нового резюме (через кнопку на главной) - очищаем старое состояние
+        reset();
+        initializeResume();
+      } else if (!resumeData?.id) {
+        // При обновлении страницы - создаем новое только если нет сохраненного состояния
+        initializeResume();
+      }
+      // Если есть resumeData.id - значит состояние восстановлено из localStorage, ничего не делаем
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeId]); // Зависим только от resumeId, чтобы не вызывать повторно
-  // reset и initializeResume - стабильные функции из Zustand store
+  }, [resumeId, isNew]); // Зависим от resumeId и isNew
 
   // Загрузка существующего резюме для редактирования
   useEffect(() => {
@@ -113,7 +118,10 @@ export default function Create() {
             <p className="text-lg font-semibold text-red-600">{loadError}</p>
             <button
               type="button"
-              onClick={() => navigate("/create")}
+              onClick={() => {
+                reset();
+                navigate("/create?new=true");
+              }}
               className="primary-button w-fit"
             >
               <p>Создать новое резюме</p>

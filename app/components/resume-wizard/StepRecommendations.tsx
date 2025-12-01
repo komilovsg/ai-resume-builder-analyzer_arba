@@ -8,7 +8,7 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
 export default function StepRecommendations() {
-  const { resumeData, addRecommendation, removeRecommendation, prevStep, initializeResume } =
+  const { resumeData, addRecommendation, removeRecommendation, prevStep, initializeResume, reset } =
     useResumeStore();
   const { kv } = usePuterStore();
   const navigate = useNavigate();
@@ -70,6 +70,9 @@ export default function StepRecommendations() {
     try {
       // Save to KV store
       await kv.set(`resume:${finalResume.id}`, JSON.stringify(finalResume));
+      
+      // Clear localStorage after successful save
+      reset();
       
       // Show success notification
       Toastify({
