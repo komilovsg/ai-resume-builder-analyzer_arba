@@ -32,10 +32,12 @@ const Navbar = () => {
           <LanguageSwitcher />
           {auth.isAuthenticated && (
             <button
-              className="primary-button w-fit"
+              className="primary-button w-fit navbar-logout"
               onClick={auth.signOut}
             >
-              {t("common.logOut")}
+              <span className="navbar-logout__label">
+                {t("common.logOut")}
+              </span>
             </button>
           )}
         </div>

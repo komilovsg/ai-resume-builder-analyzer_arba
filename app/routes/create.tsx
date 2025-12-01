@@ -7,8 +7,26 @@ import { useResumeStore } from "~/lib/resume-store";
 
 export function meta() {
   return [
-    { title: "ARBA | Create Resume" },
-    { name: "description", content: "Создайте профессиональное резюме с помощью AI" },
+    { title: "ARBA — Create Resume with AI" },
+    {
+      name: "description",
+      content:
+        "Create a professional, ATS-friendly resume step by step with AI assistance and modern templates.",
+    },
+    { name: "og:title", content: "ARBA — Create Resume with AI" },
+    {
+      name: "og:description",
+      content:
+        "Use the ARBA wizard to generate strong resume sections with AI and export them in clean templates.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "ARBA — Create Resume with AI" },
+    {
+      name: "twitter:description",
+      content:
+        "Step-by-step AI resume builder with multilingual support and ready-to-use layouts.",
+    },
   ];
 }
 

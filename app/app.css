@@ -277,6 +277,16 @@ form {
     justify-content: flex-end;
   }
 
+  .navbar-logout {
+    min-width: 150px;
+    justify-content: center;
+  }
+
+  .navbar-logout__label {
+    @apply whitespace-nowrap text-center;
+    display: block;
+  }
+
   .site-header {
     position: fixed;
     top: 0;

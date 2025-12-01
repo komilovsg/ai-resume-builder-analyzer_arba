@@ -10,8 +10,26 @@ import Icon from "~/components/Icon";
 
 export function meta() {
   return [
-    { title: "ARBA | Resume Preview" },
-    { name: "description", content: "Resume Preview" },
+    { title: "ARBA — Resume Preview" },
+    {
+      name: "description",
+      content:
+        "Preview your AI-generated resume in multiple styles before exporting or analyzing.",
+    },
+    { name: "og:title", content: "ARBA — Resume Preview" },
+    {
+      name: "og:description",
+      content:
+        "Switch between modern, classic and minimal resume templates and see your content instantly.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "ARBA — Resume Preview" },
+    {
+      name: "twitter:description",
+      content:
+        "Visually preview your resume in different templates and export a polished PDF.",
+    },
   ];
 }
 

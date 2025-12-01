@@ -7,9 +7,27 @@ import { usePuterStore } from "~/lib/puter";
 import { useTranslation } from "react-i18next";
 
 export const meta = () => {
-  [
-    { title: "ARBA | Review" },
-    { name: "description", content: "Detailed overview of your resume" },
+  return [
+    { title: "ARBA — Resume Review & ATS Score" },
+    {
+      name: "description",
+      content:
+        "Detailed AI-powered review of your resume with ATS score, section breakdown and improvement tips.",
+    },
+    { name: "og:title", content: "ARBA — Resume Review & ATS Score" },
+    {
+      name: "og:description",
+      content:
+        "See how your resume performs across tone, content, structure and skills with an ATS-focused analysis.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "ARBA — Resume Review & ATS Score" },
+    {
+      name: "twitter:description",
+      content:
+        "Get a detailed AI review of your resume and actionable suggestions to improve it.",
+    },
   ];
 };
 

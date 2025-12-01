@@ -11,8 +11,26 @@ import "toastify-js/src/toastify.css";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "ARBA" },
-    { name: "description", content: "AI-Resume Builder and Analyzer" },
+    { title: "ARBA — AI Resume Builder & ATS Analyzer" },
+    {
+      name: "description",
+      content:
+        "Create professional resumes with AI, choose modern templates and analyze your CV with ATS-friendly recommendations.",
+    },
+    { name: "og:title", content: "ARBA — AI Resume Builder & ATS Analyzer" },
+    {
+      name: "og:description",
+      content:
+        "Build and analyze resumes with AI: smart templates, multilingual support (EN/RU/TJ) and ATS-focused feedback.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "ARBA — AI Resume Builder & ATS Analyzer" },
+    {
+      name: "twitter:description",
+      content:
+        "AI-powered resume builder and analyzer with ATS optimization and multilingual support.",
+    },
   ];
 }
 
