@@ -9,6 +9,11 @@
     "analyzedResumes": "Analyzed Resumes",
     "createdResumes": "Created Resumes",
     "deleteConfirm": "Delete this resume? It cannot be restored.",
+    "deleteConfirmTitle": "Delete Resume?",
+    "deleteConfirmMessage": "Are you sure you want to delete this resume? This action cannot be undone.",
+    "deleteConfirmButton": "Delete",
+    "deleteCancel": "Cancel",
+    "deleteDeleting": "Deleting...",
     "deleteSuccess": "Resume deleted",
     "deleteError": "Failed to delete resume. Please try again later"
   },

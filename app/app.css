@@ -578,3 +578,127 @@ form {
     opacity: 1;
   }
 }
+
+.delete-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.delete-confirm-modal__content {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+.delete-confirm-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.delete-confirm-modal__title {
+  @apply text-2xl font-semibold text-gray-900;
+  margin: 0;
+}
+
+.delete-confirm-modal__description {
+  @apply text-base text-gray-600;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.delete-confirm-modal__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.delete-confirm-modal__button {
+  @apply px-6 py-3 rounded-full font-medium transition-all duration-200;
+  @apply flex items-center justify-center gap-2;
+  min-height: 44px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.delete-confirm-modal__button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.delete-confirm-modal__button--cancel {
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+.delete-confirm-modal__button--confirm {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.delete-confirm-modal__spinner {
+  @apply w-4 h-4 border-2 border-white border-t-transparent rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Мобильная адаптация - drawer снизу */
+@media (max-width: 640px) {
+  .delete-confirm-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .delete-confirm-modal__content {
+    max-width: 100%;
+    border-radius: 1.5rem 1.5rem 0 0;
+    padding: 1.5rem;
+    animation: slideUpMobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 90vh;
+  }
+
+  .delete-confirm-modal__actions {
+    flex-direction: column-reverse;
+  }
+
+  .delete-confirm-modal__button {
+    width: 100%;
+  }
+}
+
+@keyframes slideUpMobile {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

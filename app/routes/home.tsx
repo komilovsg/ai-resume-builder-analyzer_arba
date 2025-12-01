@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import Navbar from "../components/Navbar";
 import ResumeCard from "~/components/ResumeCard";
 import ResumeCardNew from "~/components/ResumeCardNew";
+import DeleteConfirmModal from "~/components/DeleteConfirmModal";
 import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { usePuterStore } from "~/lib/puter";
@@ -47,13 +48,17 @@ const isNewResume = (resume: any): resume is ResumeData => {
 };
 
 export default function Home() {
-  const { auth, kv } = usePuterStore();
+  const { auth, kv, fs } = usePuterStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [oldResumes, setOldResumes] = useState<StoredOldResume[]>([]);
   const [newResumes, setNewResumes] = useState<StoredNewResume[]>([]);
   const [loadingResumes, setLoadingResumes] = useState(false);
   const [deletingKey, setDeletingKey] = useState<string | null>(null);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    storageKey: string | null;
+  }>({ isOpen: false, storageKey: null });
 
   useEffect(() => {
     if (!auth.isAuthenticated) navigate("/auth?next=/");
@@ -113,18 +118,105 @@ export default function Home() {
     }).showToast();
   };
 
-  const handleDeleteResume = async (storageKey: string) => {
-    if (!confirm(t('home.deleteConfirm'))) {
+  const handleDeleteClick = (storageKey: string) => {
+    setModalState({ isOpen: true, storageKey });
+  };
+
+  const handleModalClose = () => {
+    if (deletingKey) return; // Не закрываем модалку во время удаления
+    setModalState({ isOpen: false, storageKey: null });
+  };
+
+  const handleDeleteResume = async () => {
+    const storageKey = modalState.storageKey;
+    if (!storageKey) return;
+
+    // Проверка авторизации
+    if (!auth.isAuthenticated) {
+      console.error("User is not authenticated");
+      showToast(t('home.deleteError'), "error");
       return;
     }
 
     setDeletingKey(storageKey);
     try {
-      const result = await kv.delete(storageKey);
-      if (!result) {
-        throw new Error("KV delete returned false");
+      console.log("=== Starting resume deletion ===");
+      console.log("Storage key:", storageKey);
+      console.log("User authenticated:", auth.isAuthenticated);
+      console.log("User:", auth.user?.username);
+      
+      // Найти резюме для получения путей к файлам
+      const oldResumeToDelete = oldResumes.find((r) => r.storageKey === storageKey);
+      
+      // Удалить файлы, если это старое резюме (у старых резюме есть файлы)
+      if (oldResumeToDelete) {
+        try {
+          console.log("Deleting associated files...");
+          if (oldResumeToDelete.imagePath) {
+            await fs.delete(oldResumeToDelete.imagePath);
+            console.log("Deleted image file:", oldResumeToDelete.imagePath);
+          }
+          if (oldResumeToDelete.resumePath) {
+            await fs.delete(oldResumeToDelete.resumePath);
+            console.log("Deleted resume file:", oldResumeToDelete.resumePath);
+          }
+        } catch (fileError) {
+          console.warn("Error deleting files (continuing with KV delete):", fileError);
+          // Продолжаем удаление даже если файлы не удалились
+        }
       }
 
+      // Попытка удалить запись из KV storage
+      let kvDeleteSuccess = false;
+      try {
+        console.log("Attempting to delete KV entry...");
+        
+        // Проверить, существует ли ключ перед удалением
+        const existingValue = await kv.get(storageKey);
+        if (existingValue === null || existingValue === undefined) {
+          console.warn("Resume not found in KV storage (key may have been already deleted)");
+          kvDeleteSuccess = true; // Считаем успешным, если ключа уже нет
+        } else {
+          // Удалить запись из KV storage
+          const result = await kv.delete(storageKey);
+          console.log("KV delete result:", result);
+          
+          // Puter API возвращает boolean: true = успех, false = ошибка
+          // undefined может быть только если Puter не доступен
+          if (result === true) {
+            kvDeleteSuccess = true;
+            console.log("KV entry deleted successfully");
+          } else if (result === false) {
+            console.error("KV delete returned false - deletion failed");
+            throw new Error("KV delete returned false - deletion failed");
+          } else if (result === undefined) {
+            console.error("KV delete returned undefined - Puter.js may not be available");
+            throw new Error("KV delete returned undefined - Puter.js may not be available");
+          }
+        }
+      } catch (kvError) {
+        console.error("Error during KV delete operation:", kvError);
+        // Пробуем удалить еще раз на случай временной ошибки
+        try {
+          console.log("Retrying KV delete...");
+          const retryResult = await kv.delete(storageKey);
+          if (retryResult === true) {
+            kvDeleteSuccess = true;
+            console.log("KV entry deleted successfully on retry");
+          } else {
+            throw kvError; // Бросаем оригинальную ошибку
+          }
+        } catch (retryError) {
+          console.error("KV delete failed on retry as well:", retryError);
+          throw new Error(`Failed to delete from KV storage: ${kvError instanceof Error ? kvError.message : String(kvError)}`);
+        }
+      }
+      
+      if (!kvDeleteSuccess) {
+        throw new Error("KV delete was not successful");
+      }
+
+      // Обновить состояние
       setOldResumes((prev) =>
         prev.filter((resume) => resume.storageKey !== storageKey)
       );
@@ -132,9 +224,17 @@ export default function Home() {
         prev.filter((resume) => resume.storageKey !== storageKey)
       );
 
+      // Закрыть модалку и показать успех
+      setModalState({ isOpen: false, storageKey: null });
       showToast(t('home.deleteSuccess'), "success");
+      console.log("Resume deleted successfully");
     } catch (error) {
       console.error("Error deleting resume:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        storageKey,
+      });
       showToast(t('home.deleteError'), "error");
     } finally {
       setDeletingKey(null);
@@ -221,7 +321,7 @@ export default function Home() {
                     <ResumeCard
                       key={resume.storageKey}
                       resume={resume}
-                      onDelete={handleDeleteResume}
+                      onDelete={handleDeleteClick}
                       isDeleting={deletingKey === resume.storageKey}
                     />
                   ))}
@@ -237,7 +337,7 @@ export default function Home() {
                     <ResumeCardNew
                       key={resume.storageKey}
                       resume={resume}
-                      onDelete={handleDeleteResume}
+                      onDelete={handleDeleteClick}
                       isDeleting={deletingKey === resume.storageKey}
                     />
                   ))}
@@ -248,6 +348,12 @@ export default function Home() {
         )}
 
       </section>
+      <DeleteConfirmModal
+        isOpen={modalState.isOpen}
+        onClose={handleModalClose}
+        onConfirm={handleDeleteResume}
+        isLoading={deletingKey !== null}
+      />
     </main>
   );
 }

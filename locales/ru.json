@@ -8,7 +8,12 @@
     "uploadResume": "Загрузить и оценить резюме",
     "analyzedResumes": "Проанализированные резюме",
     "createdResumes": "Созданные резюме",
-    "deleteConfirm": "Удалить это резюме? Его нельзя будет восстановить.",
+    "deleteConfirm": "Удалить",
+    "deleteConfirmTitle": "Удалить резюме?",
+    "deleteConfirmMessage": "Вы уверены, что хотите удалить это резюме? Это действие нельзя отменить.",
+    "deleteConfirmButton": "Удалить",
+    "deleteCancel": "Отмена",
+    "deleteDeleting": "Удаление...",
     "deleteSuccess": "Резюме удалено",
     "deleteError": "Не удалось удалить резюме. Попробуйте позже"
   },
