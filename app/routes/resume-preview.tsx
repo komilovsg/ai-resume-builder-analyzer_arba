@@ -227,16 +227,6 @@ export default function ResumePreviewPage() {
               <span className="hidden sm:inline">{t('preview.edit')}</span>
             </Link>
           )}
-          <button
-            type="button"
-            onClick={handleEvaluate}
-            disabled={isEvaluating}
-            className="primary-button !w-auto !px-3 !py-2 sm:!px-6 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            title={isEvaluating ? t('preview.evaluating') : t('preview.evaluate')}
-          >
-            <Icon name="evaluate" className="sm:hidden text-white" size={18} />
-            <span className="hidden sm:inline">{isEvaluating ? t('preview.evaluating') : t('preview.evaluate')}</span>
-          </button>
           <div className="sm:hidden">
             <LanguageSwitcher />
           </div>

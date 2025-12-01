@@ -1,28 +1,28 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useResumeStore } from "~/lib/resume-store";
 import { useTranslation } from "react-i18next";
 
-const commonLanguages = [
-  "Русский",
-  "Английский",
-  "Таджикский",
-  "Немецкий",
-  "Французский",
-  "Испанский",
-  "Итальянский",
-  "Китайский",
-  "Японский",
-  "Корейский",
-  "Арабский",
-  "Турецкий",
-  "Узбекский",
-  "Казахский",
-  "Украинский",
-  "Польский",
-  "Португальский",
-  "Хинди",
-];
+const languageKeys = [
+  "russian",
+  "english",
+  "tajik",
+  "german",
+  "french",
+  "spanish",
+  "italian",
+  "chinese",
+  "japanese",
+  "korean",
+  "arabic",
+  "turkish",
+  "uzbek",
+  "kazakh",
+  "ukrainian",
+  "polish",
+  "portuguese",
+  "hindi",
+] as const;
 
 export default function StepLanguages() {
   const { resumeData, addLanguage, removeLanguage, nextStep, prevStep } =
@@ -34,6 +34,15 @@ export default function StepLanguages() {
   const [useCustom, setUseCustom] = useState(false);
 
   const languages = resumeData.languages || [];
+
+  const commonLanguages = useMemo(
+    () =>
+      languageKeys.map((key) => ({
+        key,
+        label: t(`wizard.languages.common.${key}`),
+      })),
+    [t]
+  );
 
   const languageLevels: { value: LanguageLevel; label: string }[] = [
     { value: "native", label: t('wizard.languages.levels.native') },
@@ -144,8 +153,8 @@ export default function StepLanguages() {
               >
                 <option value="">{t('wizard.languages.selectLanguage')}</option>
                 {commonLanguages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
+                  <option key={lang.key} value={lang.label}>
+                    {lang.label}
                   </option>
                 ))}
               </select>

@@ -39,9 +39,12 @@ export const generateExperienceDescriptionPrompt = (
   profession: string,
   language: SupportedLanguage
 ): string => {
-  const languageInstruction = language === "ru"
-    ? "Каждый пункт описания обязан быть написан на русском языке."
-    : "Each bullet point must be written in English.";
+  const languageInstruction =
+    language === "ru"
+      ? "Каждый пункт описания обязан быть написан на русском языке."
+      : language === "tj"
+      ? "Ҳар як нуқтаи тавсиф бояд пурра ба забони тоҷикӣ навишта шавад."
+      : "Each bullet point must be written in English.";
 
   return `You are an expert resume writer. Your task is to create a professional job description for a resume entry.
 
@@ -72,9 +75,12 @@ export const generateSkillsPrompt = (
   profession: string,
   language: SupportedLanguage
 ): string => {
-  const languageInstruction = language === "ru"
-    ? "Названия всех навыков должны быть на русском языке."
-    : "List all skill names in English.";
+  const languageInstruction =
+    language === "ru"
+      ? "Названия всех навыков должны быть на русском языке."
+      : language === "tj"
+      ? "Номи ҳамаи маҳоратҳо бояд ба забони тоҷикӣ навишта шавад."
+      : "List all skill names in English.";
 
   return `You are an expert career advisor. Your task is to suggest relevant skills for a resume.
 

@@ -360,6 +360,9 @@ export default function ResumePreview({ resumeData, onContentRef }: ResumePrevie
   return (
     <div className="w-full max-w-6xl px-4 resume-preview-container">
       {/* Style Selector */}
+      <div className="mb-6 text-center text-sm text-gray-600">
+        {t('preview.stylesDescription')}
+      </div>
       <div className="mb-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 resume-style-switcher">
         <button
           onClick={() => handleStyleChange("modern")}

@@ -1,5 +1,6 @@
 import { usePuterStore } from "./puter";
 import { detectLanguage } from "./language";
+import i18n from "./i18n";
 import {
   generateAboutPrompt,
   generateExperienceDescriptionPrompt,
@@ -19,7 +20,7 @@ export async function generateAboutText(
     throw new Error("AI service not available");
   }
 
-  const language = detectLanguage([rawText, profession]);
+  const language = detectLanguage([rawText, profession], i18n.language);
   const prompt = generateAboutPrompt(rawText, profession, language);
 
   try {
@@ -65,7 +66,10 @@ export async function generateExperienceDescription(
     throw new Error("AI service not available");
   }
 
-  const language = detectLanguage([rawDescription, company, position, profession]);
+  const language = detectLanguage(
+    [rawDescription, company, position, profession],
+    i18n.language
+  );
   const prompt = generateExperienceDescriptionPrompt(
     rawDescription,
     company,
@@ -141,7 +145,7 @@ export async function generateSuggestedSkills(
     throw new Error("AI service not available");
   }
 
-  const language = detectLanguage([profession]);
+  const language = detectLanguage([profession], i18n.language);
   const prompt = generateSkillsPrompt(profession, language);
 
   try {

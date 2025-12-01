@@ -96,15 +96,15 @@ export default function StepAbout() {
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
+        <div className="w-full flex justify-between gap-4 mt-8">
           <button
             type="button"
             onClick={prevStep}
-            className="secondary-button w-full sm:w-1/2"
+            className="secondary-button w-full"
           >
             <p>{t('wizard.about.back')}</p>
           </button>
-          <button type="submit" className="primary-button w-full sm:w-1/2">
+          <button type="submit" className="primary-button w-full">
             <p>{t('wizard.about.continue')}</p>
           </button>
         </div>

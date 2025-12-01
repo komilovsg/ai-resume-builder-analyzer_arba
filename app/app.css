@@ -32,7 +32,8 @@ body {
 }
 
 main {
-  @apply min-h-screen pt-10;
+  @apply min-h-screen;
+  padding-top: 5.5rem;
 }
 h1 {
   @apply max-sm:text-[3rem] text-6xl  text-gradient leading-tight xl:tracking-[-2px] font-semibold;
@@ -66,6 +67,9 @@ form {
   }
   .primary-button {
     @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full;
+    @apply flex items-center justify-center gap-2;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
   }
   .resume-nav {
     @apply flex flex-row justify-between items-center p-3 sm:p-4 border-b border-gray-200 gap-2;
@@ -178,7 +182,16 @@ form {
   }
 
   .home-cta__btn {
-    @apply w-full sm:w-auto px-8 flex items-center justify-center gap-2 text-base font-semibold;
+    @apply w-full sm:w-auto flex items-center justify-center gap-2 text-base font-semibold;
+  }
+
+  .home-cta__btn--primary {
+    @apply sm:w-[230px] px-6;
+    white-space: nowrap;
+  }
+
+  .home-cta__btn--secondary {
+    @apply sm:flex-1 px-6;
   }
 
   .home-cta__icon {
@@ -239,17 +252,52 @@ form {
   }
 
   .navbar {
-    @apply flex flex-row justify-between items-center bg-white rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+    @apply flex flex-row justify-between items-center rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transition:
+      background-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+    pointer-events: auto;
+  }
+
+  .navbar--scrolled {
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 55px rgba(15, 23, 42, 0.18);
+    transform: translateY(-2px);
   }
 
   .navbar-actions {
     @apply flex flex-row items-center gap-4;
+    /* Фиксируем минимальную ширину, чтобы блок не дёргался при смене языка / длины текста */
+    min-width: 260px;
+    justify-content: flex-end;
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    pointer-events: none;
   }
 
   .language-switcher {
-    @apply flex flex-row items-center gap-1 bg-gray-100 rounded-full p-1;
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply inline-flex items-center gap-1 rounded-full bg-gray-100 p-1;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .language-switcher--changing {
@@ -261,17 +309,18 @@ form {
   }
 
   .language-switcher__button {
-    @apply px-4 py-2 rounded-full text-sm font-medium;
+    @apply px-4 py-2 rounded-full text-xs sm:text-sm font-medium;
     @apply text-gray-600 hover:text-gray-900;
     @apply min-w-[44px] text-center relative z-10;
+    @apply select-none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: scale(1);
   }
 
   .language-switcher__button.active {
-    @apply primary-gradient text-white shadow-md;
-    transform: scale(1.05);
-    animation: languageSwitchActive 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply primary-gradient text-white;
+    box-shadow: 0 8px 20px rgba(88, 116, 255, 0.35);
+    transform: scale(1.02);
   }
 
   .language-switcher__button:not(.active) {
@@ -293,6 +342,18 @@ form {
 
   .form-div {
     @apply flex flex-col gap-2 w-full items-start;
+  }
+
+  .skills-add-button {
+    @apply primary-gradient text-white rounded-2xl cursor-pointer w-[30%];
+    @apply flex items-center justify-center whitespace-nowrap text-sm font-medium;
+    padding: 1rem 2rem; /* как у input: p-4 */
+    height: 100%;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .skills-add-button--disabled {
+    @apply opacity-50 cursor-not-allowed;
   }
 
   .uplader-drag-area {

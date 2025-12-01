@@ -268,12 +268,12 @@ export default function StepExperience() {
               onChange={(e) => setRawDescription(e.target.value)}
               placeholder={t('wizard.experience.jobDescriptionPlaceholder')}
             />
-            <div className="flex items-center gap-2 mt-2">
+            <div className="w-full flex justify-between gap-4 mt-2">
               <button
                 type="button"
                 onClick={handleGenerateDescription}
                 disabled={!rawDescription.trim() || isGenerating || !company.trim() || !position.trim()}
-                className={`primary-button w-full sm:w-auto sm:px-6 py-2 text-sm ${
+                className={`primary-button w-full ${
                   !rawDescription.trim() || isGenerating || !company.trim() || !position.trim()
                     ? "opacity-50 cursor-not-allowed"
                     : ""
@@ -283,7 +283,7 @@ export default function StepExperience() {
               </button>
             </div>
             {generatedDescription && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="w-full mt-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <label className="text-sm font-semibold text-gray-700 mb-2 block">
                   {t('wizard.experience.generatedDescriptionLabel')}
                 </label>
@@ -312,14 +312,14 @@ export default function StepExperience() {
           </button>
         </form>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
-          <button type="button" onClick={prevStep} className="secondary-button w-full sm:w-1/2">
+        <div className="w-full flex justify-between gap-4 mt-8">
+          <button type="button" onClick={prevStep} className="secondary-button w-full">
             <p>{t('wizard.experience.back')}</p>
           </button>
           <button
             type="button"
             onClick={handleNextStep}
-            className="primary-button w-full sm:w-1/2"
+            className="primary-button w-full"
           >
             <p>{t('wizard.experience.continue')}</p>
           </button>

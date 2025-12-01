@@ -145,7 +145,7 @@ export default function Home() {
               </p>
             </div>
             <div className="home-cta__actions">
-              <Link to="/create" className="primary-button home-cta__btn">
+              <Link to="/create" className="primary-button home-cta__btn home-cta__btn--primary">
                 <span className="home-cta__icon" aria-hidden="true">
                   <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
                     <path
@@ -157,9 +157,9 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-                <p>{t('home.createResume')}</p>
+                <p className="truncate">{t('home.createResume')}</p>
               </Link>
-              <Link to="/upload" className="secondary-button home-cta__btn">
+              <Link to="/upload" className="secondary-button home-cta__btn home-cta__btn--secondary">
                 <span className="home-cta__icon" aria-hidden="true">
                   <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
                     <path
@@ -178,7 +178,7 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-                <p>{t('home.uploadResume')}</p>
+                <p className="truncate">{t('home.uploadResume')}</p>
               </Link>
             </div>
           </div>

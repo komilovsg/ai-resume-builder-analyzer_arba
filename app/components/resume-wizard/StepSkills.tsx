@@ -158,7 +158,7 @@ export default function StepSkills() {
               <label htmlFor="new-skill" className="text-sm text-gray-600 mb-2">
                 {t('wizard.skills.skillInputLabel')}
               </label>
-              <div className="flex gap-1 justify-center items-center">
+              <div className="flex gap-1 justify-center items-stretch">
                 <div className="w-[70%]">
                   <input
                     type="text"
@@ -174,8 +174,8 @@ export default function StepSkills() {
                 <button
                   type="submit"
                   disabled={!newSkill.trim()}
-                  className={`primary-button px-8 whitespace-nowrap w-[30%] flex items-center justify-center ${
-                    !newSkill.trim() ? "opacity-50 cursor-not-allowed" : ""
+                  className={`skills-add-button ${
+                    !newSkill.trim() ? "skills-add-button--disabled" : ""
                   }`}
                 >
                   <p>{t('wizard.skills.addButton')}</p>
