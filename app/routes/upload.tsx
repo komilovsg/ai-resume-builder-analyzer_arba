@@ -126,22 +126,28 @@ export default function Upload() {
                     <h1>{t('upload.title')}</h1>
                     {isProcessing ? (
                         <>
-                            <h2>{statusText}</h2>
-                            {(statusText.includes('Error:') || statusText.includes('Ошибка:')) ? (
-                                <div className="mt-4">
-                                    <button 
-                                        onClick={() => {
-                                            setIsProcessing(false);
-                                            setStatusText(" ");
-                                        }}
-                                        className="primary-button"
-                                    >
-                                        {t('upload.tryAgain')}
-                                    </button>
-                                </div>
-                            ) : (
-                                <img src='/images/resume-scan.gif' className="w-1/2 mx-auto" />
-                            )}
+                            <div className="flex flex-col items-center gap-4 w-full">
+                                <h2 className="text-xl text-gray-700 font-semibold">{statusText}</h2>
+                                {(statusText.includes('Error:') || statusText.includes('Ошибка:') || statusText.includes(t('upload.error'))) ? (
+                                    <div className="mt-4 flex flex-col items-center gap-4">
+                                        <div className="w-16 h-16 border-4 border-red-200 border-t-red-600 rounded-full animate-spin"></div>
+                                        <button 
+                                            onClick={() => {
+                                                setIsProcessing(false);
+                                                setStatusText(" ");
+                                            }}
+                                            className="primary-button"
+                                        >
+                                            {t('upload.tryAgain')}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                                        <img src='/images/resume-scan.gif' className="w-1/2 mx-auto max-w-md" alt="Processing" />
+                                    </div>
+                                )}
+                            </div>
                         </>
                     ) : (
                         <>

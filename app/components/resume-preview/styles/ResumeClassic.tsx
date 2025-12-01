@@ -29,11 +29,11 @@ export default function ResumeClassic({ resumeData, variant = "page" }: ResumeCl
       {/* Header */}
       <header className="mb-8 text-center">
         {resumeData.fullName && (
-          <h1 className="text-5xl font-bold text-gray-900 mb-2 uppercase tracking-wide">
+          <h1 className={`${variant === "card" ? "text-xl" : "text-5xl"} font-bold text-gray-900 mb-2 uppercase tracking-wide`}>
             {resumeData.fullName}
           </h1>
         )}
-        <p className="text-2xl font-semibold text-gray-800 uppercase tracking-[0.4em]">
+        <p className={`${variant === "card" ? "text-sm" : "text-2xl"} font-semibold text-gray-800 uppercase tracking-[0.4em]`}>
           {resumeData.title}
         </p>
         {contactSegments.length > 0 && (

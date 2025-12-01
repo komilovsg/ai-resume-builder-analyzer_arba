@@ -68,7 +68,7 @@ export default function Auth() {
                     </div>
                     <div className="auth-actions">
                         {isLoading ? (
-                            <button className="auth-button auth-button--loading" disabled>
+                            <button className="auth-button auth-button--primary auth-button--loading" disabled>
                                 <span className="auth-button-spinner"></span>
                                 <span>Signing you in...</span>
                             </button>

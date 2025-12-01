@@ -147,7 +147,7 @@ export default function Home() {
             <div className="home-cta__actions">
               <Link to="/create" className="primary-button home-cta__btn">
                 <span className="home-cta__icon" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
                     <path
                       d="M8 3.333v9.334M3.333 8h9.334"
                       stroke="currentColor"
@@ -161,7 +161,7 @@ export default function Home() {
               </Link>
               <Link to="/upload" className="secondary-button home-cta__btn">
                 <span className="home-cta__icon" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
                     <path
                       d="M10.667 1.333H4A1.333 1.333 0 0 0 2.667 2.667v10.666A1.333 1.333 0 0 0 4 14.667h8a1.333 1.333 0 0 0 1.333-1.334V5.333L10.667 1.333Z"
                       stroke="currentColor"
@@ -196,7 +196,7 @@ export default function Home() {
         {!loadingResumes && (oldResumes.length > 0 || newResumes.length > 0) && (
           <>
             {oldResumes.length > 0 && (
-              <div className="w-fullNamePlaceholder">
+              <div className="w-full">
                 <h2 className="text-2xl font-bold mb-4 text-center">{t('home.analyzedResumes')}</h2>
                 <div className="resumes-section">
                   {oldResumes.map((resume) => (

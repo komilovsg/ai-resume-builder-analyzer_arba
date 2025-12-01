@@ -20,39 +20,61 @@ export default function Resume() {
   const [imageUrl, setImageUrl] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [isLoadingResume, setIsLoadingResume] = useState(true);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
     
-}, [auth.isAuthenticated]);
+}, [auth.isAuthenticated, isLoading, navigate, id]);
 
   useEffect(() => {
     const loadResume = async () => {
-      const resume = await kv.get(`resume:${id}`);
+      setIsLoadingResume(true);
+      setIsImageLoaded(false);
+      try {
+        const resume = await kv.get(`resume:${id}`);
 
-      if (!resume) return;
+        if (!resume) {
+          setIsLoadingResume(false);
+          return;
+        }
 
-      const data = JSON.parse(resume);
+        const data = JSON.parse(resume);
 
-      const resumeBlob = await fs.read(data.resumePath);
-      if (!resumeBlob) return;
+        const resumeBlob = await fs.read(data.resumePath);
+        if (!resumeBlob) {
+          setIsLoadingResume(false);
+          return;
+        }
 
-      const pdfBlob = new Blob([resumeBlob], { type: "application/pdf" });
-      const resumeUrl = URL.createObjectURL(pdfBlob);
-      setResumeUrl(resumeUrl);
+        const pdfBlob = new Blob([resumeBlob], { type: "application/pdf" });
+        const resumeUrl = URL.createObjectURL(pdfBlob);
+        setResumeUrl(resumeUrl);
 
-      const imageBlob = await fs.read(data.imagePath);
-      if (!imageBlob) return;
+        const imageBlob = await fs.read(data.imagePath);
+        if (!imageBlob) {
+          setIsLoadingResume(false);
+          return;
+        }
 
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setImageUrl(imageUrl);
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImageUrl(imageUrl);
 
-      setFeedback(data.feedback);
-      console.log({ resumeUrl, imageUrl, feedback });
+        setFeedback(data.feedback);
+        console.log({ resumeUrl, imageUrl, feedback });
+      } catch (error) {
+        console.error("Error loading resume:", error);
+      } finally {
+        setIsLoadingResume(false);
+      }
     };
-    loadResume();
-  }, [id]);
+    
+    if (id && auth.isAuthenticated) {
+      loadResume();
+    }
+  }, [id, kv, fs, auth.isAuthenticated]);
 
   return (
     <main className="!pt-0">
@@ -66,17 +88,31 @@ export default function Resume() {
       </nav>
       <div className="flex flex-row w-full max-lg:flex-col-reverse">
         <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover h-[100vh] sticky top-0 items-center justify-center">
-          {imageUrl && resumeUrl && (
-            <div className="animate-in fade-in duration-1000 gradient-border msx-sm:m-0 h-[90%] max-wxl:h-fit w-fit">
+          {isLoadingResume ? (
+            <div className="flex flex-col items-center justify-center gap-4 h-full">
+              <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <p className="text-gray-600">{t('resumeReview.loading')}</p>
+            </div>
+          ) : imageUrl && resumeUrl ? (
+            <div className="relative animate-in fade-in duration-1000 gradient-border msx-sm:m-0 h-[90%] max-wxl:h-fit w-fit">
+              {!isImageLoaded && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gray-50 rounded-xl">
+                  <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <p className="text-sm text-gray-500">Загрузка изображения...</p>
+                </div>
+              )}
               <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
                 <img
                   src={imageUrl}
-                  className="w-full h-full object-contain rounded-2xl"
+                  onLoad={() => setIsImageLoaded(true)}
+                  className={`w-full h-full object-contain rounded-2xl transition-opacity duration-300 ${
+                    isImageLoaded ? "opacity-100" : "opacity-0"
+                  }`}
                   title={t('resumeReview.title')}
                 />
               </a>
             </div>
-          )}
+          ) : null}
         </section>
         <section className="feedback-section">
           <h2 className="text-4xl !text-black font-bold">{t('resumeReview.title')}</h2>

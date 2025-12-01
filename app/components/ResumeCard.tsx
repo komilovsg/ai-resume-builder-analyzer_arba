@@ -18,17 +18,30 @@ const ResumeCard = ({
   const { id, companyName, jobTitle, feedback, imagePath, storageKey } = resume;
   const { fs } = usePuterStore();
   const [resumeUrl, setResumeUrl] = useState("");
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
 
   useEffect(() => {
     const loadResumes = async () => {
+      setIsLoadingImage(true);
       const blob = await fs.read(imagePath);
-      if (!blob) return;
+      if (!blob) {
+        setIsLoadingImage(false);
+        return;
+      }
       let url = URL.createObjectURL(blob);
       setResumeUrl(url);
     };
 
     loadResumes();
-  }, [imagePath]);
+  }, [imagePath, fs]);
+
+  const handleImageLoad = () => {
+    setIsLoadingImage(false);
+  };
+
+  const handleImageError = () => {
+    setIsLoadingImage(false);
+  };
 
   const handleDeleteClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -58,40 +71,52 @@ const ResumeCard = ({
         }`}
       >
         <div className="resume-card-header">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             {companyName && (
-              <h2 className="!text-base font-bold  break-words">
+              <h2 className="!text-sm font-bold break-words">
                 {companyName}
               </h2>
             )}
             {jobTitle && (
-              <h3 className="text-lg text-gray-500 break-words">{jobTitle}</h3>
+              <h3 className="text-sm text-gray-500 break-words">{jobTitle}</h3>
             )}
             {!companyName && !jobTitle && (
-              <h2 className="!text-black font-bold">Resume</h2>
+              <h2 className="!text-black font-bold text-sm">Resume</h2>
             )}
           </div>
           <div className="flex-shrink-0">
             {feedback && feedback.overallScore !== undefined ? (
               <ScoreCircle score={feedback.overallScore} />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-                <span className="text-sm text-gray-500">N/A</span>
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+                <span className="text-xs text-gray-500">N/A</span>
               </div>
             )}
           </div>
         </div>
-        {resumeUrl && (
-          <div className="gradient-border animate-in fade-in duration-1000">
-            <div className="w-full h-full">
+        <div className="gradient-border relative">
+          <div className="w-full h-[300px] max-sm:h-[180px] relative bg-gray-50 rounded-xl flex items-center justify-center">
+            {isLoadingImage && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-xl">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <p className="text-xs text-gray-500">Загрузка...</p>
+                </div>
+              </div>
+            )}
+            {resumeUrl && (
               <img
                 src={resumeUrl}
                 alt="resume"
-                className="w-full h-[350px]  max-sm:h-[200px] object-cover object-top"
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                className={`w-full h-full object-cover object-top rounded-xl transition-opacity duration-300 ${
+                  isLoadingImage ? "opacity-0" : "opacity-100"
+                }`}
               />
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </Link>
     </div>
   );

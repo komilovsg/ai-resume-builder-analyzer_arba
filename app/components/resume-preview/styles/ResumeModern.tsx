@@ -29,11 +29,11 @@ export default function ResumeModern({ resumeData, variant = "page" }: ResumeMod
       {/* Header */}
       <header className="mb-8 pb-6 border-b-2 border-gray-300">
         {resumeData.fullName && (
-          <h1 className="text-4xl font-bold text-gray-900 tracking-wide mb-1">
+          <h1 className={`${variant === "card" ? "text-xl" : "text-2xl"} font-bold text-gray-900 tracking-wide mb-1`}>
             {resumeData.fullName}
           </h1>
         )}
-        <p className="text-2xl font-semibold text-gray-700 uppercase tracking-wide">
+        <p className={`${variant === "card" ? "text-sm" : "text-2xl"} font-semibold text-gray-700 uppercase tracking-wide`}>
           {resumeData.title}
         </p>
         {contactSegments.length > 0 && (

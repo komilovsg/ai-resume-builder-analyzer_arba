@@ -212,6 +212,7 @@
   "resumeReview": {
     "backToHomepage": "Back to Homepage",
     "title": "Resume Review",
+    "loading": "Loading resume...",
     "resumeScore": "Your Resume Score",
     "scoreDescription": "This score is calculated based on the variables listed below.",
     "categories": {

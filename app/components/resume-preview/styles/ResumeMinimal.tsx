@@ -29,11 +29,11 @@ export default function ResumeMinimal({ resumeData, variant = "page" }: ResumeMi
       {/* Header */}
       <header className="mb-12">
         {resumeData.fullName && (
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-wide mb-1">
+          <h1 className={`${variant === "card" ? "text-lg" : "text-2xl"} font-semibold text-gray-900 tracking-wide mb-1`}>
             {resumeData.fullName}
           </h1>
         )}
-        <p className="text-xl font-light text-gray-700 uppercase tracking-widest">
+        <p className={`${variant === "card" ? "text-xs" : "text-xl"} font-light text-gray-700 uppercase tracking-widest`}>
           {resumeData.title}
         </p>
         {contactSegments.length > 0 && (

@@ -66,7 +66,7 @@ export default function ResumeCardNew({
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group animate-in fade-in duration-1000 pb-20">
       <div className="absolute -top-3 -right-3 z-10 flex gap-2 opacity-0 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
         <button
           type="button"
@@ -96,7 +96,7 @@ export default function ResumeCardNew({
           isDeleting ? "pointer-events-none opacity-60" : ""
         }`}
       >
-        <div className="resume-card-preview-shell">
+        <div className="resume-card-preview-shell p-2 animate-in fade-in duration-1000">
           <div className="resume-card-preview-scale">{renderPreviewByStyle()}</div>
         </div>
         <div className="resume-card-caption">
