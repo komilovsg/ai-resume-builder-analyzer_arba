@@ -123,24 +123,24 @@ export default function StepLanguages() {
         <form onSubmit={handleAddLanguage} className="space-y-4">
           <div className="form-div">
             <label>{t('wizard.languages.selectOrEnter')}</label>
-            <div className="flex flex-col sm:flex-row gap-4 mb-2">
+            <div className="flex flex gap-4 mb-2">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   checked={!useCustom}
                   onChange={() => setUseCustom(false)}
-                  className="w-5 h-5 cursor-pointer"
+                  className="w-3 h-3 cursor-pointer"
                 />
-                <span className="text-gray-700 group-hover:text-gray-900">{t('wizard.languages.fromList')}</span>
+                <span className="text-gray-700 group-hover:text-gray-900 whitespace-nowrap">{t('wizard.languages.fromList')}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   checked={useCustom}
                   onChange={() => setUseCustom(true)}
-                  className="w-5 h-5 cursor-pointer"
+                  className="w-3 h-3 cursor-pointer"
                 />
-                <span className="text-gray-700 group-hover:text-gray-900">{t('wizard.languages.custom')}</span>
+                <span className="text-gray-700 group-hover:text-gray-900 whitespace-nowrap">{t('wizard.languages.custom')}</span>
               </label>
             </div>
 

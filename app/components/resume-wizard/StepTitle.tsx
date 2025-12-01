@@ -80,7 +80,7 @@ export default function StepTitle() {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 w-full">
           <div className="form-div">
             <label htmlFor="resume-location">{t('wizard.title.location')}</label>
             <input
@@ -117,7 +117,7 @@ export default function StepTitle() {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 w-full">
           <div className="form-div">
             <label htmlFor="resume-linkedin">{t('wizard.title.linkedin')}</label>
             <input

@@ -246,16 +246,18 @@ export default function StepExperience() {
                 disabled={isPresent}
                 required={!isPresent}
               />
-              <label className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  checked={isPresent}
-                  onChange={(e) => setIsPresent(e.target.checked)}
-                />
-                <span className="text-sm">{t('wizard.experience.presentTime')}</span>
-              </label>
             </div>
           </div>
+
+          <label className="flex items-center gap-2 w-full mt-2">
+            <input
+              type="checkbox"
+              checked={isPresent}
+              onChange={(e) => setIsPresent(e.target.checked)}
+              className="checkbox-present-mobile hover:border-green-500"
+            />
+            <span className="text-sm">{t('wizard.experience.presentTime')}</span>
+          </label>
 
           <div className="form-div">
             <label htmlFor="description-raw">

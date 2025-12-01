@@ -18,7 +18,12 @@
     "deleteError": "Failed to delete resume. Please try again later"
   },
   "common": {
-    "logOut": "Log Out"
+    "logOut": "Log Out",
+    "close": "Close"
+  },
+  "mobile": {
+    "menu": "Menu",
+    "language": "Select Language"
   },
   "wizard": {
     "steps": {
