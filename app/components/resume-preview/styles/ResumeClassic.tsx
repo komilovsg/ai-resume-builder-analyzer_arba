@@ -1,4 +1,5 @@
 import { buildContactSegments } from "../utils/contact";
+import { useTranslation } from "react-i18next";
 
 interface ResumeClassicProps {
   resumeData: ResumeData;
@@ -6,22 +7,17 @@ interface ResumeClassicProps {
 }
 
 export default function ResumeClassic({ resumeData, variant = "page" }: ResumeClassicProps) {
+  const { t } = useTranslation();
   const contactSegments = buildContactSegments(resumeData);
   const isInteractive = variant === "page";
   const formatDate = (date: string | null) => {
-    if (!date) return "По настоящее время";
+    if (!date) return t("wizard.experience.presentTime");
     const [year, month] = date.split("-");
     return `${month}/${year}`;
   };
 
   const getLanguageLabel = (level: LanguageLevel) => {
-    const labels: Record<LanguageLevel, string> = {
-      native: "Родной",
-      fluent: "Свободно",
-      intermediate: "Средний",
-      basic: "Базовый",
-    };
-    return labels[level];
+    return t(`wizard.languages.levels.${level}`);
   };
 
   return (
@@ -65,7 +61,7 @@ export default function ResumeClassic({ resumeData, variant = "page" }: ResumeCl
       {resumeData.experiences && resumeData.experiences.length > 0 && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 uppercase tracking-wide border-b-2 border-gray-900 pb-2">
-            Опыт работы
+            {t("wizard.experience.title")}
           </h2>
           <div className="space-y-6">
             {resumeData.experiences.map((exp) => (
@@ -98,7 +94,7 @@ export default function ResumeClassic({ resumeData, variant = "page" }: ResumeCl
       {resumeData.skills && resumeData.skills.length > 0 && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 uppercase tracking-wide border-b-2 border-gray-900 pb-2">
-            Навыки
+            {t("wizard.skills.title")}
           </h2>
           <div className="grid grid-cols-3 gap-2">
             {resumeData.skills.map((skill, index) => (
@@ -117,7 +113,7 @@ export default function ResumeClassic({ resumeData, variant = "page" }: ResumeCl
       {resumeData.languages && resumeData.languages.length > 0 && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 uppercase tracking-wide border-b-2 border-gray-900 pb-2">
-            Языки
+            {t("wizard.languages.title")}
           </h2>
           <div className="space-y-2">
             {resumeData.languages.map((lang) => (
@@ -137,7 +133,7 @@ export default function ResumeClassic({ resumeData, variant = "page" }: ResumeCl
         resumeData.recommendations.length > 0 && (
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4 uppercase tracking-wide border-b-2 border-gray-900 pb-2">
-              Рекомендации
+              {t("wizard.recommendations.title")}
             </h2>
             <div className="space-y-4">
               {resumeData.recommendations.map((rec) => (
