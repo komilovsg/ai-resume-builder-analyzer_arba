@@ -166,54 +166,38 @@ export default function Home() {
         }
       }
 
-      // Попытка удалить запись из KV storage
-      let kvDeleteSuccess = false;
+      // Удалить запись из KV storage
+      // Согласно документации Puter, метод просто удаляет запись
+      // Если запись не существует, это не ошибка - просто продолжаем
       try {
         console.log("Attempting to delete KV entry...");
+        await kv.delete(storageKey);
+        console.log("KV entry deleted successfully");
         
-        // Проверить, существует ли ключ перед удалением
-        const existingValue = await kv.get(storageKey);
-        if (existingValue === null || existingValue === undefined) {
-          console.warn("Resume not found in KV storage (key may have been already deleted)");
-          kvDeleteSuccess = true; // Считаем успешным, если ключа уже нет
-        } else {
-          // Удалить запись из KV storage
-          const result = await kv.delete(storageKey);
-          console.log("KV delete result:", result);
-          
-          // Puter API возвращает boolean: true = успех, false = ошибка
-          // undefined может быть только если Puter не доступен
-          if (result === true) {
-            kvDeleteSuccess = true;
-            console.log("KV entry deleted successfully");
-          } else if (result === false) {
-            console.error("KV delete returned false - deletion failed");
-            throw new Error("KV delete returned false - deletion failed");
-          } else if (result === undefined) {
-            console.error("KV delete returned undefined - Puter.js may not be available");
-            throw new Error("KV delete returned undefined - Puter.js may not be available");
-          }
+        // Проверяем, что запись действительно удалена
+        const verifyValue = await kv.get(storageKey);
+        if (verifyValue !== null && verifyValue !== undefined) {
+          console.warn("KV entry still exists after delete, trying again...");
+          // Пробуем еще раз
+          await kv.delete(storageKey);
         }
       } catch (kvError) {
         console.error("Error during KV delete operation:", kvError);
         // Пробуем удалить еще раз на случай временной ошибки
         try {
           console.log("Retrying KV delete...");
-          const retryResult = await kv.delete(storageKey);
-          if (retryResult === true) {
-            kvDeleteSuccess = true;
-            console.log("KV entry deleted successfully on retry");
-          } else {
-            throw kvError; // Бросаем оригинальную ошибку
-          }
+          await kv.delete(storageKey);
+          console.log("KV entry deleted successfully on retry");
         } catch (retryError) {
           console.error("KV delete failed on retry as well:", retryError);
-          throw new Error(`Failed to delete from KV storage: ${kvError instanceof Error ? kvError.message : String(kvError)}`);
+          // Проверяем, может запись уже удалена
+          const verifyValue = await kv.get(storageKey);
+          if (verifyValue === null || verifyValue === undefined) {
+            console.log("KV entry was deleted despite error (may have been already deleted)");
+          } else {
+            throw new Error(`Failed to delete from KV storage: ${kvError instanceof Error ? kvError.message : String(kvError)}`);
+          }
         }
-      }
-      
-      if (!kvDeleteSuccess) {
-        throw new Error("KV delete was not successful");
       }
 
       // Обновить состояние
