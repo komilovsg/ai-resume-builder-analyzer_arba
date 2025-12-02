@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 
-const ScoreCircle = ({ score = 75 }: { score: number }) => {
+interface ScoreCircleProps {
+  score: number;
+  size?: number;
+}
+
+const ScoreCircle = ({ score = 75, size = 80 }: ScoreCircleProps) => {
   const [animatedScore, setAnimatedScore] = useState(0);
   const animationRef = useRef<number | null>(null);
   const radius = 40;
@@ -49,8 +54,13 @@ const ScoreCircle = ({ score = 75 }: { score: number }) => {
     };
   }, [score]);
 
+  const containerSize = `${size}px`;
+
   return (
-    <div className="relative w-[80px] h-[80px]">
+    <div
+      className="relative"
+      style={{ width: containerSize, height: containerSize }}
+    >
       <svg
         height="100%"
         width="100%"
@@ -88,7 +98,9 @@ const ScoreCircle = ({ score = 75 }: { score: number }) => {
 
       {/* Score and issues */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-semibold text-[12px]">{`${Math.round(animatedScore)}/100`}</span>
+        <span className="font-semibold text-[12px] md:text-[14px]">
+          {`${Math.round(animatedScore)}/100`}
+        </span>
       </div>
     </div>
   );

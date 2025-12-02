@@ -283,6 +283,30 @@ export default function Home() {
                 </span>
                 <p className="truncate">{t('home.uploadResume')}</p>
               </Link>
+              <Link
+                to="/jobs"
+                className="secondary-button home-cta__btn home-cta__btn--secondary"
+              >
+                <span className="home-cta__icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M2.667 4.667A1.333 1.333 0 0 1 4 3.333h8a1.333 1.333 0 0 1 1.333 1.334v7.333A1.333 1.333 0 0 1 12 13.333H4a1.333 1.333 0 0 1-1.333-1.333V4.667Z"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M5.333 2.667V4M10.667 2.667V4M4 6.667h8"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <p className="truncate">{t("home.jobs")}</p>
+              </Link>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@
     "description": "Create a new resume from scratch or upload a ready PDF to get ATS assessment and tips",
     "createResume": "Create Resume",
     "uploadResume": "Upload and Assess Resume",
+    "jobs": "Job Listings",
     "analyzedResumes": "Analyzed Resumes",
     "createdResumes": "Created Resumes",
     "deleteConfirm": "Delete this resume? It cannot be restored.",
