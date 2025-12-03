@@ -1,6 +1,6 @@
 import type { Route } from "./+types/job";
-import { useParams, Link } from "react-router";
-import { useEffect, useState, useMemo } from "react";
+import { useParams, Link, useLocation } from "react-router";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import ScoreCircle from "../components/ScoreCircle";
@@ -12,6 +12,7 @@ import {
   analyzeResumeAgainstJob,
   type JobMatchAnalysisResult,
 } from "../lib/job-match-ai";
+import { IoMdArrowBack } from "react-icons/io";
 
 export function meta({ params }: Route.MetaArgs) {
   const job = jobs.find((j) => j.id === params.id);
@@ -27,9 +28,11 @@ export function meta({ params }: Route.MetaArgs) {
 
 export default function JobRoute() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const job = jobs.find((j) => j.id === id);
   const { auth, kv, fs, ai } = usePuterStore();
   const { i18n, t } = useTranslation();
+  const prevIdRef = useRef<string | undefined>(id);
   
   // Получаем переведенные данные вакансии
   const getTranslatedJob = useMemo(() => {
@@ -80,6 +83,99 @@ export default function JobRoute() {
   );
   const [loadingSaved, setLoadingSaved] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  // Storage key для сохранения состояния конкретной вакансии
+  const storageKey = `job-analysis-${id}`;
+
+  // Загрузка сохраненного состояния при монтировании или изменении id
+  useEffect(() => {
+    if (!id) return;
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        
+        // Восстанавливаем результат анализа
+        if (parsed.result) {
+          setResult(parsed.result);
+        }
+        
+        // Восстанавливаем выбранный источник
+        if (parsed.selectedSource) {
+          setSelectedSource(parsed.selectedSource);
+        }
+        
+        // Восстанавливаем выбранный storage key
+        if (parsed.selectedStorageKey) {
+          setSelectedStorageKey(parsed.selectedStorageKey);
+        }
+        
+        // Примечание: File объекты нельзя сериализовать в localStorage,
+        // поэтому uploadedFile не сохраняем, но это нормально - пользователь может загрузить файл снова
+      } else {
+        // Если нет сохраненного состояния, сбрасываем к начальным значениям
+        setResult(null);
+        setSelectedSource("upload");
+        setSelectedStorageKey(null);
+      }
+    } catch (error) {
+      console.error("Error loading saved job analysis state:", error);
+    }
+  }, [id, storageKey]);
+
+  // Сохранение состояния при изменении (debounced)
+  useEffect(() => {
+    if (!id) return;
+
+    const timeoutId = setTimeout(() => {
+      try {
+        const stateToSave = {
+          result,
+          selectedSource,
+          selectedStorageKey,
+          // Сохраняем timestamp для отладки
+          savedAt: new Date().toISOString(),
+        };
+        
+        localStorage.setItem(storageKey, JSON.stringify(stateToSave));
+      } catch (error) {
+        console.error("Error saving job analysis state:", error);
+      }
+    }, 300); // Debounce 300ms
+
+    return () => clearTimeout(timeoutId);
+  }, [result, selectedSource, selectedStorageKey, id, storageKey]);
+
+  // Очистка состояния при изменении id (переход на другую вакансию)
+  useEffect(() => {
+    const prevId = prevIdRef.current;
+    
+    // Если id изменился, очищаем состояние для предыдущей вакансии
+    if (prevId && prevId !== id) {
+      const prevStorageKey = `job-analysis-${prevId}`;
+      try {
+        localStorage.removeItem(prevStorageKey);
+      } catch (error) {
+        console.error("Error clearing previous job analysis state:", error);
+      }
+    }
+    
+    // Обновляем ref для следующего рендера
+    prevIdRef.current = id;
+  }, [id]);
+
+  // Очистка состояния при выходе со страницы (навигация на другую страницу, не /jobs/:id)
+  useEffect(() => {
+    // Очищаем состояние если мы находимся не на странице jobs
+    if (id && location.pathname !== `/jobs/${id}` && location.pathname !== `/jobs/${id}/`) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (error) {
+        console.error("Error clearing job analysis state on navigation:", error);
+      }
+    }
+  }, [location.pathname, id, storageKey]);
 
   useEffect(() => {
     const loadSavedResumes = async () => {
@@ -462,9 +558,12 @@ ${jobDescription}
     <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
       <Navbar />
       <section className="main-section py-6 sm:py-8 lg:py-12 px-4 sm:px-6">
-        <div className="mb-4 sm:mb-6 text-sm">
-          <Link to="/jobs" className="text-primary-600 hover:underline inline-flex items-center gap-1">
-            <span>←</span>
+        <div className="w-full flex justify-start">
+          <Link 
+            to="/jobs" 
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-primary-500 hover:text-primary-600 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base"
+          >
+            <IoMdArrowBack size={20} className="flex-shrink-0" />
             <span>{t("jobs.backToJobs")}</span>
           </Link>
         </div>

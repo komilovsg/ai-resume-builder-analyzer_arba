@@ -277,6 +277,147 @@ form {
     justify-content: flex-end;
   }
 
+  .navbar-user-section {
+    @apply flex flex-row items-center gap-3;
+    position: relative;
+  }
+
+  .navbar-user-info {
+    @apply flex flex-row items-center gap-2 rounded-full;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    padding: 0.375rem;
+    border-radius: 9999px;
+  }
+
+  .navbar-user-info:hover {
+    @apply bg-gray-50;
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  .navbar-user-info:active {
+    transform: scale(0.95);
+  }
+
+  .navbar-user-chevron {
+    @apply text-gray-500 transition-transform duration-200;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  .navbar-user-chevron--open {
+    transform: rotate(180deg);
+  }
+
+  .navbar-user-avatar {
+    @apply w-9 h-9 rounded-full flex items-center justify-center;
+    background: linear-gradient(135deg, rgb(142, 152, 255), rgb(96, 107, 235));
+    flex-shrink: 0;
+  }
+
+  .navbar-user-avatar-text {
+    @apply text-white font-semibold text-xs sm:text-sm;
+  }
+
+  .navbar-user-details {
+    @apply flex flex-col gap-0.5;
+    min-width: 0;
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .navbar-user-details {
+      display: flex;
+    }
+  }
+
+  .navbar-user-name {
+    @apply text-xs sm:text-sm font-medium text-gray-900 truncate;
+    max-width: 120px;
+  }
+
+  @media (min-width: 768px) {
+    .navbar-user-name {
+      max-width: 150px;
+    }
+  }
+
+  .navbar-user-email {
+    @apply text-[10px] sm:text-xs text-gray-500 truncate;
+    max-width: 120px;
+  }
+
+  @media (min-width: 768px) {
+    .navbar-user-email {
+      max-width: 150px;
+    }
+  }
+
+  .navbar-user-dropdown {
+    @apply absolute top-full right-0 mt-2 w-64 rounded-2xl bg-white border border-gray-200 shadow-xl;
+    z-index: 50;
+    animation: slideDown 0.2s ease-out;
+    overflow: hidden;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .navbar-user-dropdown__header {
+    @apply flex flex-row items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-gray-100;
+  }
+
+  .navbar-user-dropdown__avatar {
+    @apply w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0;
+    background: linear-gradient(135deg, rgb(142, 152, 255), rgb(96, 107, 235));
+    box-shadow: 0 4px 12px rgba(96, 107, 235, 0.3);
+  }
+
+  .navbar-user-dropdown__avatar-text {
+    @apply text-white font-bold text-base;
+  }
+
+  .navbar-user-dropdown__info {
+    @apply flex flex-col gap-0.5 flex-1 min-w-0;
+  }
+
+  .navbar-user-dropdown__name {
+    @apply text-sm font-semibold text-gray-900;
+  }
+
+  .navbar-user-dropdown__email {
+    @apply text-xs text-gray-600;
+  }
+
+  .navbar-user-dropdown__divider {
+    @apply h-px bg-gray-200;
+  }
+
+  .navbar-user-dropdown__logout {
+    @apply w-full flex items-center gap-3 px-4 py-3 text-left text-red-600 hover:bg-red-50 transition-colors;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .navbar-user-dropdown__logout svg {
+    @apply text-red-600;
+  }
+
+  .navbar-user-dropdown__logout:hover svg {
+    @apply text-red-700;
+  }
+
   .navbar-logout {
     min-width: 150px;
     justify-content: center;
@@ -838,8 +979,47 @@ form {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 100;
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn 0.3s ease-out;
     display: block;
+  }
+
+  /* Eye effect animations */
+  @keyframes eyeOpen {
+    0% {
+      transform: translateY(100%) scaleY(0.1);
+      opacity: 0;
+      border-radius: 50% 50% 0 0;
+    }
+    50% {
+      transform: translateY(20%) scaleY(0.3);
+      opacity: 0.7;
+      border-radius: 40% 40% 0 0;
+    }
+    100% {
+      transform: translateY(0) scaleY(1);
+      opacity: 1;
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+  }
+
+  @keyframes eyeBlink {
+    0%, 100% {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   /* Drawer */
@@ -887,6 +1067,33 @@ form {
     @apply p-6;
     overflow-y: auto;
     max-height: calc(80vh - 80px);
+  }
+
+  .mobile-drawer__user-info {
+    @apply flex flex-row items-center gap-4 p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-drawer__user-avatar {
+    @apply w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0;
+    background: linear-gradient(135deg, rgb(142, 152, 255), rgb(96, 107, 235));
+    box-shadow: 0 4px 12px rgba(96, 107, 235, 0.3);
+  }
+
+  .mobile-drawer__user-avatar-text {
+    @apply text-white font-bold text-lg;
+  }
+
+  .mobile-drawer__user-details {
+    @apply flex flex-col gap-1 flex-1 min-w-0;
+  }
+
+  .mobile-drawer__user-name {
+    @apply text-base font-semibold text-gray-900;
+  }
+
+  .mobile-drawer__user-email {
+    @apply text-sm text-gray-600;
   }
 
   .mobile-drawer__logout-button {
@@ -960,6 +1167,36 @@ form {
     color: rgb(96, 107, 235);
     width: 24px;
     height: 24px;
+  }
+
+  /* Eye effect animations */
+  @keyframes eyeOpen {
+    0% {
+      transform: translateY(100%) scaleY(0.1);
+      opacity: 0;
+      border-radius: 50% 50% 0 0;
+    }
+    50% {
+      transform: translateY(20%) scaleY(0.3);
+      opacity: 0.7;
+      border-radius: 40% 40% 0 0;
+    }
+    100% {
+      transform: translateY(0) scaleY(1);
+      opacity: 1;
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+  }
+
+  @keyframes eyeBlink {
+    0%, 100% {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
   }
 
   /* Уменьшаем padding-top для main на мобильном и добавляем нижний padding */

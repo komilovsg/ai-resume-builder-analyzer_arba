@@ -27,6 +27,11 @@ export default function JobsRoute() {
           <p className="text-xs sm:text-sm text-gray-600 mt-2 sm:mt-3 max-w-xl leading-relaxed">
             {t("jobs.description")}
           </p>
+          <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl max-w-xl">
+            <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+              {t("jobs.languageNote")}
+            </p>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">

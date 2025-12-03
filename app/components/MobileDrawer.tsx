@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import Icon from './Icon';
 import MobileLanguageSwitcher from './MobileLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import type { PuterUser } from '~/types';
 
 interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   type: 'logout' | 'language';
   onLogout?: () => void;
+  user?: PuterUser | null;
 }
 
 export default function MobileDrawer({
@@ -15,6 +17,7 @@ export default function MobileDrawer({
   onClose,
   type,
   onLogout,
+  user,
 }: MobileDrawerProps) {
   const { t } = useTranslation();
 
@@ -72,18 +75,37 @@ export default function MobileDrawer({
         </div>
 
         <div className="mobile-drawer__content">
-          {type === 'logout' && onLogout && (
-            <button
-              type="button"
-              onClick={() => {
-                onLogout();
-                onClose();
-              }}
-              className="mobile-drawer__logout-button"
-            >
-              <Icon name="logout" size={24} />
-              <span>{t('common.logOut')}</span>
-            </button>
+          {type === 'logout' && (
+            <>
+              {user && (
+                <div className="mobile-drawer__user-info">
+                  <div className="mobile-drawer__user-avatar">
+                    <span className="mobile-drawer__user-avatar-text">
+                      {user.username?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                  <div className="mobile-drawer__user-details">
+                    <p className="mobile-drawer__user-name">{user.username || 'User'}</p>
+                    {user.email && (
+                      <p className="mobile-drawer__user-email">{user.email}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {onLogout && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onLogout();
+                    onClose();
+                  }}
+                  className="mobile-drawer__logout-button"
+                >
+                  <Icon name="logout" size={24} />
+                  <span>{t('common.logOut')}</span>
+                </button>
+              )}
+            </>
           )}
 
           {type === 'language' && <MobileLanguageSwitcher onClose={onClose} />}

@@ -268,7 +268,8 @@
   "jobs": {
     "title": "Job Listings",
     "description": "Select a job to review requirements and assess your chances with your current resume.",
-    "backToJobs": "← Back to all jobs",
+    "languageNote": "ℹ️ The language of the assessment will depend on the language you have selected in the interface switcher. If you have English selected, the analysis will be in English; if Russian or Tajik, the analysis will be in the corresponding language.",
+    "backToJobs": "Back to all jobs",
     "notFound": "Job not found.",
     "backToJobList": "Return to job listings",
     "workWithResume": "Work with Resume",

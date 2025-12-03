@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Icon from './Icon';
 import MobileDrawer from './MobileDrawer';
 import { usePuterStore } from '~/lib/puter';
+import { HiOutlineLanguage } from "react-icons/hi2";
+import { VscAccount } from "react-icons/vsc";
 
 export default function MobileBottomNav() {
   const { auth } = usePuterStore();
@@ -28,15 +30,15 @@ export default function MobileBottomNav() {
           className="mobile-bottom-nav__button"
           aria-label="Change language"
         >
-          <Icon name="language" size={24} />
+          <HiOutlineLanguage size={24} />
         </button>
         <button
           type="button"
           onClick={() => openDrawer('logout')}
           className="mobile-bottom-nav__button"
-          aria-label="Logout"
+          aria-label="Profile"
         >
-          <Icon name="logout" size={24} />
+          <VscAccount size={24} />
         </button>
       </nav>
 
@@ -45,6 +47,7 @@ export default function MobileBottomNav() {
         onClose={closeDrawer}
         type={drawerType || 'logout'}
         onLogout={auth.signOut}
+        user={auth.user}
       />
     </>
   );
