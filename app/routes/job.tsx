@@ -13,6 +13,7 @@ import {
   type JobMatchAnalysisResult,
 } from "../lib/job-match-ai";
 import { IoMdArrowBack } from "react-icons/io";
+import { LuMessageCircleWarning } from "react-icons/lu";
 
 export function meta({ params }: Route.MetaArgs) {
   const job = jobs.find((j) => j.id === params.id);
@@ -558,6 +559,12 @@ ${jobDescription}
     <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
       <Navbar />
       <section className="main-section py-6 sm:py-8 lg:py-12 px-4 sm:px-6">
+      <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl w-full">
+            <p className="text-xs sm:text-sm text-blue-800 leading-relaxed flex items-center gap-2">
+              <LuMessageCircleWarning size={28} className="flex-shrink-0" />
+              {t("jobs.languageNote")}
+            </p>
+          </div>
         <div className="w-full flex justify-start">
           <Link 
             to="/jobs" 

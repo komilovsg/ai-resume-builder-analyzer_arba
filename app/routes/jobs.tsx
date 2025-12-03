@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import { jobs } from "../../constants/jobs";
+import { LuMessageCircleWarning } from "react-icons/lu";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,19 +22,23 @@ export default function JobsRoute() {
   return (
     <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
       <Navbar />
-      <section className="main-section py-6 sm:py-8 lg:py-12 px-4 sm:px-6">
-        <div className="page-heading page-heading--compact mb-6 sm:mb-8">
+      <section className="main-section pt-6 sm:pt-8 px-4 sm:px-6">
+        <div className="page-heading page-heading--compact flex flex-col gap-4 w-screen -mx-4 sm:-mx-6 px-4 sm:px-6">
           <h1 className="text-2xl sm:text-3xl lg:text-[2.5rem] leading-tight">{t("jobs.title")}</h1>
-          <p className="text-xs sm:text-sm text-gray-600 mt-2 sm:mt-3 max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-gray-600 mt-2 sm:mt-3 w-full leading-relaxed">
             {t("jobs.description")}
           </p>
-          <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl max-w-xl">
+        </div>
+        </section>
+        <section className="main-section px-4 sm:px-6">
+          <div className="flex items-center gap-2 mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl w-full">
+            <LuMessageCircleWarning size={28} className="flex-shrink-0 text-blue-800" />
             <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
               {t("jobs.languageNote")}
             </p>
           </div>
-        </div>
-
+          </section>
+        <section className="main-section py-6 sm:py-8 lg:py-12 px-4 sm:px-6">
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job) => (
             <Link
