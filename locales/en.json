@@ -264,5 +264,180 @@
       "description": "Below are quick recommendations tailored to improve your resume's match with automated screening systems.",
       "footer": "Keep iterating—incremental improvements can significantly boost your ATS compatibility."
     }
+  },
+  "jobs": {
+    "title": "Job Listings",
+    "description": "Select a job to review requirements and assess your chances with your current resume.",
+    "backToJobs": "← Back to all jobs",
+    "notFound": "Job not found.",
+    "backToJobList": "Return to job listings",
+    "workWithResume": "Work with Resume",
+    "workWithResumeDescription": "You can either create a new resume for this job, or assess your chances with an already collected or saved resume.",
+    "resumeSource": "Where to get resume for analysis?",
+    "uploadPDF": "Upload PDF",
+    "fromSaved": "From saved",
+    "uploadPDFDescription": "Upload a PDF resume file — we'll compare it with this job and show your chances.",
+    "loadingSaved": "Loading your resumes list...",
+    "noSavedResumes": "No saved resumes in new format yet. Create a resume on the home page and save it.",
+    "selectResume": "Select resume:",
+    "notSelected": "— Not selected —",
+    "assessChances": "Assess My Chances",
+    "analyzing": "Analyzing chances for this job...",
+    "matchScore": "Match Score",
+    "overallMatch": "Overall Match",
+    "hardSkills": "Hard skills",
+    "softSkills": "Soft skills",
+    "experience": "Experience",
+    "structure": "Structure",
+    "criticalGaps": "Critical Gaps",
+    "summary": "Summary / About Me",
+    "skills": "Skills",
+    "extra": "Additional",
+    "openJob": "Open job",
+    "sections": {
+      "description": "Description",
+      "requirements": "Required Qualifications",
+      "niceToHave": "Nice to Have"
+    },
+    "jobData": {
+      "senior-frontend-react": {
+        "title": "Senior Frontend Engineer (React/TypeScript)",
+        "description": "We are building an AI-powered resume builder and ATS analyzer and are looking for a Senior Frontend Engineer who is passionate about great UX, clean architecture and modern React tooling.",
+        "requirements": [
+          "3+ years of experience with React and TypeScript",
+          "Strong understanding of modern frontend architecture and state management",
+          "Experience with Tailwind CSS or similar utility-first CSS frameworks",
+          "Ability to design and implement reusable UI components",
+          "Experience with API integration and working with async data"
+        ],
+        "niceToHave": [
+          "Experience with AI/LLM-powered products",
+          "Experience with design systems and component libraries",
+          "Background in UX/UI or close collaboration with designers"
+        ]
+      },
+      "middle-backend-node": {
+        "title": "Backend Engineer (Node.js)",
+        "description": "We are looking for a Backend Engineer to help us scale AI-resume analysis, integrate external services and build a reliable API for our frontend.",
+        "requirements": [
+          "2+ years of experience with Node.js",
+          "Experience with RESTful API design",
+          "Solid understanding of relational or NoSQL databases",
+          "Knowledge of authentication and authorization principles"
+        ],
+        "niceToHave": [
+          "Experience with serverless architectures",
+          "Experience with AI/ML related APIs"
+        ]
+      },
+      "junior-frontend-react": {
+        "title": "Junior Frontend Developer (React)",
+        "description": "We are looking for a motivated Junior Frontend Developer to join our team. This is a great opportunity to grow your skills while working on an innovative AI-powered product.",
+        "requirements": [
+          "6+ months of experience with React or similar frameworks",
+          "Basic knowledge of JavaScript/TypeScript",
+          "Understanding of HTML, CSS, and responsive design",
+          "Willingness to learn and adapt quickly",
+          "Good communication skills and team player attitude"
+        ],
+        "niceToHave": [
+          "Experience with Git version control",
+          "Familiarity with Tailwind CSS",
+          "Portfolio or GitHub with personal projects"
+        ]
+      },
+      "middle-frontend-react": {
+        "title": "Middle Frontend Developer (React/TypeScript)",
+        "description": "We need a Middle Frontend Developer to help us build and maintain our AI-powered resume builder. You'll work with modern React stack and collaborate with a talented team.",
+        "requirements": [
+          "2+ years of experience with React and TypeScript",
+          "Experience with state management (Redux, Zustand, or similar)",
+          "Knowledge of modern CSS frameworks (Tailwind, styled-components, etc.)",
+          "Experience with RESTful APIs and async data handling",
+          "Understanding of component architecture and code reusability"
+        ],
+        "niceToHave": [
+          "Experience with testing frameworks (Jest, React Testing Library)",
+          "Knowledge of Next.js or similar frameworks",
+          "Experience with design systems"
+        ]
+      },
+      "ui-ux-designer": {
+        "title": "UI/UX Designer",
+        "description": "We are seeking a creative UI/UX Designer to help us create intuitive and beautiful user interfaces for our AI-powered resume builder. You'll work closely with developers and product managers.",
+        "requirements": [
+          "2+ years of experience in UI/UX design",
+          "Strong portfolio demonstrating design skills",
+          "Proficiency in Figma, Adobe XD, or similar design tools",
+          "Understanding of user-centered design principles",
+          "Ability to create wireframes, prototypes, and design systems"
+        ],
+        "niceToHave": [
+          "Experience with design systems and component libraries",
+          "Basic knowledge of HTML/CSS",
+          "Experience with user research and testing",
+          "Knowledge of accessibility standards (WCAG)"
+        ]
+      },
+      "product-manager": {
+        "title": "Product Manager",
+        "description": "We are looking for an experienced Product Manager to lead product development for our AI-powered resume builder. You'll work with cross-functional teams to define product strategy and roadmap.",
+        "requirements": [
+          "3+ years of experience as a Product Manager",
+          "Experience with B2B or SaaS products",
+          "Strong analytical and problem-solving skills",
+          "Ability to work with technical teams and understand technical constraints",
+          "Experience with user research and data-driven decision making"
+        ],
+        "niceToHave": [
+          "Experience with AI/ML products",
+          "Technical background (engineering, computer science)",
+          "Experience with agile methodologies",
+          "Knowledge of analytics tools (Google Analytics, Mixpanel, etc.)"
+        ]
+      },
+      "junior-backend-node": {
+        "title": "Junior Backend Developer (Node.js)",
+        "description": "We are looking for a Junior Backend Developer to join our team. This is an excellent opportunity to learn and grow while working on real-world AI-powered applications.",
+        "requirements": [
+          "6+ months of experience with Node.js or similar backend technologies",
+          "Basic understanding of JavaScript/TypeScript",
+          "Knowledge of RESTful API principles",
+          "Understanding of databases (SQL or NoSQL)",
+          "Willingness to learn and work in a team environment"
+        ],
+        "niceToHave": [
+          "Experience with Express.js or similar frameworks",
+          "Knowledge of authentication and authorization",
+          "Familiarity with Git and version control"
+        ]
+      },
+      "senior-backend-node": {
+        "title": "Senior Backend Engineer (Node.js)",
+        "description": "We need a Senior Backend Engineer to lead our backend architecture and help scale our AI-powered resume analysis platform. You'll work on complex technical challenges and mentor junior developers.",
+        "requirements": [
+          "5+ years of experience with Node.js",
+          "Deep understanding of backend architecture and design patterns",
+          "Experience with microservices and distributed systems",
+          "Strong knowledge of databases (PostgreSQL, MongoDB, Redis)",
+          "Experience with cloud platforms (AWS, GCP, or Azure)"
+        ],
+        "niceToHave": [
+          "Experience with Docker and Kubernetes",
+          "Knowledge of message queues (RabbitMQ, Kafka)",
+          "Experience with AI/ML integration",
+          "Background in system design and scalability"
+        ]
+      }
+    },
+    "errors": {
+      "aiUnavailable": "AI service unavailable. Please try again later.",
+      "noFile": "First upload a PDF resume file so we can assess it.",
+      "uploadFailed": "Failed to upload resume file. Please try again.",
+      "noResumeSelected": "Select a resume from the created list to start analysis.",
+      "resumeNotFound": "Failed to find selected resume. Please try selecting another one.",
+      "analysisFailed": "Failed to perform analysis. Please try again.",
+      "usageLimitExceeded": "AI usage limit has been reached. Please check your Puter account limits or try again later."
+    }
   }
 }

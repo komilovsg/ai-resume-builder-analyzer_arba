@@ -1,6 +1,6 @@
 import type { Route } from "./+types/job";
 import { useParams, Link } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import ScoreCircle from "../components/ScoreCircle";
@@ -29,7 +29,45 @@ export default function JobRoute() {
   const { id } = useParams<{ id: string }>();
   const job = jobs.find((j) => j.id === id);
   const { auth, kv, fs, ai } = usePuterStore();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
+  
+  // Получаем переведенные данные вакансии
+  const getTranslatedJob = useMemo(() => {
+    if (!job) return null;
+    
+    const language = i18n.language || "en";
+    try {
+      const translationKey = `jobs.jobData.${job.id}`;
+      const jobData = t(translationKey, { returnObjects: true }) as any;
+      
+      // Проверяем, что jobData это объект и содержит title (не строка с ключом перевода)
+      if (
+        jobData && 
+        typeof jobData === "object" && 
+        !Array.isArray(jobData) && 
+        jobData.title && 
+        typeof jobData.title === "string" &&
+        jobData.title !== translationKey &&
+        !jobData.title.startsWith("jobs.jobData.")
+      ) {
+        return {
+          ...job,
+          title: jobData.title || job.title,
+          description: jobData.description || job.description,
+          requirements: Array.isArray(jobData.requirements) ? jobData.requirements : job.requirements,
+          niceToHave: Array.isArray(jobData.niceToHave) ? jobData.niceToHave : job.niceToHave,
+        };
+      } else {
+        console.warn(`Translation not found for ${translationKey}, using default job data`);
+      }
+    } catch (error) {
+      console.warn("Error getting translated job data, using default:", error);
+    }
+    
+    return job;
+  }, [job, i18n.language, t]);
+  
+  const translatedJob = getTranslatedJob;
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<JobMatchAnalysisResult | null>(null);
@@ -74,14 +112,14 @@ export default function JobRoute() {
     loadSavedResumes();
   }, [auth.isAuthenticated, kv]);
 
-  if (!job) {
+  if (!job || !translatedJob) {
     return (
       <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
         <Navbar />
         <section className="main-section py-12">
-          <p className="text-lg text-gray-700">Вакансия не найдена.</p>
+          <p className="text-lg text-gray-700">{t("jobs.notFound")}</p>
           <Link to="/jobs" className="mt-4 inline-block text-primary-600">
-            Вернуться к списку вакансий
+            {t("jobs.backToJobList")}
           </Link>
         </section>
       </main>
@@ -95,45 +133,188 @@ export default function JobRoute() {
       setResult(null);
 
       if (!ai) {
-        setError("AI сервис недоступен. Попробуйте позже.");
+        setError(t("jobs.errors.aiUnavailable"));
         return;
       }
 
       if (selectedSource === "upload") {
         if (!uploadedFile) {
-          setError("Сначала загрузите PDF-файл резюме, чтобы мы могли его оценить.");
+          setError(t("jobs.errors.noFile"));
           return;
         }
 
         const uploaded = await fs.upload([uploadedFile]);
         if (!uploaded || !uploaded.path) {
-          setError("Не удалось загрузить файл резюме. Попробуйте ещё раз.");
+          setError(t("jobs.errors.uploadFailed"));
           return;
         }
 
+        const language = i18n.language || "en";
+        
+        // Build job description based on language using translated job data
         const jobTextParts: string[] = [];
-        jobTextParts.push(`Название: ${job.title}`);
-        jobTextParts.push(`Компания: ${job.company}`);
-        if (job.location) jobTextParts.push(`Локация: ${job.location}`);
-        if (job.employmentType)
-          jobTextParts.push(`Формат: ${job.employmentType}`);
-        if (job.salaryRange)
-          jobTextParts.push(`Зарплата: ${job.salaryRange}`);
-        jobTextParts.push("");
-        jobTextParts.push("Описание вакансии:");
-        jobTextParts.push(job.description);
-        jobTextParts.push("");
-        jobTextParts.push("Обязательные требования:");
-        job.requirements.forEach((req) => jobTextParts.push(`- ${req}`));
-        if (job.niceToHave && job.niceToHave.length > 0) {
+        if (language === "en") {
+          jobTextParts.push(`Title: ${translatedJob.title}`);
+          jobTextParts.push(`Company: ${translatedJob.company}`);
+          if (translatedJob.location) jobTextParts.push(`Location: ${translatedJob.location}`);
+          if (translatedJob.employmentType) jobTextParts.push(`Type: ${translatedJob.employmentType}`);
+          if (translatedJob.salaryRange) jobTextParts.push(`Salary: ${translatedJob.salaryRange}`);
           jobTextParts.push("");
-          jobTextParts.push("Будет плюсом:");
-          job.niceToHave.forEach((item) => jobTextParts.push(`- ${item}`));
+          jobTextParts.push("Job Description:");
+          jobTextParts.push(translatedJob.description);
+          jobTextParts.push("");
+          jobTextParts.push("Required Qualifications:");
+          translatedJob.requirements.forEach((req: string) => jobTextParts.push(`- ${req}`));
+          if (translatedJob.niceToHave && translatedJob.niceToHave.length > 0) {
+            jobTextParts.push("");
+            jobTextParts.push("Nice to Have:");
+            translatedJob.niceToHave.forEach((item: string) => jobTextParts.push(`- ${item}`));
+          }
+        } else if (language === "tj") {
+          jobTextParts.push(`Ном: ${translatedJob.title}`);
+          jobTextParts.push(`Ширкат: ${translatedJob.company}`);
+          if (translatedJob.location) jobTextParts.push(`Ҷойгиршавӣ: ${translatedJob.location}`);
+          if (translatedJob.employmentType) jobTextParts.push(`Намуд: ${translatedJob.employmentType}`);
+          if (translatedJob.salaryRange) jobTextParts.push(`Маош: ${translatedJob.salaryRange}`);
+          jobTextParts.push("");
+          jobTextParts.push("Тавсифи вакансия:");
+          jobTextParts.push(translatedJob.description);
+          jobTextParts.push("");
+          jobTextParts.push("Талаботи зарурӣ:");
+          translatedJob.requirements.forEach((req: string) => jobTextParts.push(`- ${req}`));
+          if (translatedJob.niceToHave && translatedJob.niceToHave.length > 0) {
+            jobTextParts.push("");
+            jobTextParts.push("Хуб мешавад:");
+            translatedJob.niceToHave.forEach((item: string) => jobTextParts.push(`- ${item}`));
+          }
+        } else {
+          // Russian (default)
+          jobTextParts.push(`Название: ${translatedJob.title}`);
+          jobTextParts.push(`Компания: ${translatedJob.company}`);
+          if (translatedJob.location) jobTextParts.push(`Локация: ${translatedJob.location}`);
+          if (translatedJob.employmentType) jobTextParts.push(`Формат: ${translatedJob.employmentType}`);
+          if (translatedJob.salaryRange) jobTextParts.push(`Зарплата: ${translatedJob.salaryRange}`);
+          jobTextParts.push("");
+          jobTextParts.push("Описание вакансии:");
+          jobTextParts.push(translatedJob.description);
+          jobTextParts.push("");
+          jobTextParts.push("Обязательные требования:");
+          translatedJob.requirements.forEach((req: string) => jobTextParts.push(`- ${req}`));
+          if (translatedJob.niceToHave && translatedJob.niceToHave.length > 0) {
+            jobTextParts.push("");
+            jobTextParts.push("Будет плюсом:");
+            translatedJob.niceToHave.forEach((item: string) => jobTextParts.push(`- ${item}`));
+          }
         }
         const jobDescription = jobTextParts.join("\n");
 
-        const language = i18n.language || "en";
-        const instructions = `
+        // Build prompt based on language
+        let instructions = "";
+        if (language === "en") {
+          instructions = `
+You are a professional career consultant and HR specialist for IT job positions.
+
+You have been provided with a PDF file containing a candidate's resume (RESUME_FILE) and a job description text (JOB_DESCRIPTION).
+
+JOB_DESCRIPTION:
+"""
+${jobDescription}
+"""
+
+Task:
+1. Carefully read the resume from the file and match it against the job posting.
+2. Assess how well the resume fits this specific job position.
+3. Highlight the candidate's strengths relative to the requirements.
+4. Identify key gaps and risks.
+5. Provide specific recommendations on how to improve the resume specifically for this job.
+
+Respond in the user's interface language: English.
+
+Response format — strictly JSON according to the following schema:
+
+{
+  "overallScore": number,
+  "verdict": string,
+  "matchingSummary": {
+    "hardSkillsScore": number,
+    "softSkillsScore": number,
+    "experienceRelevanceScore": number,
+    "structureClarityScore": number
+  },
+  "matchedKeywords": {
+    "requiredPresent": string[],
+    "requiredMissing": string[],
+    "niceToHavePresent": string[],
+    "niceToHaveMissing": string[]
+  },
+  "criticalGaps": string[],
+  "improvementSuggestions": {
+    "summary": string[],
+    "experience": string[],
+    "skills": string[],
+    "extra": string[]
+  }
+}
+
+Requirements:
+- Do not go beyond this schema.
+- Write concisely, to the point, without generic phrases.
+- Focus on the actual text of the job posting and resume from the file.
+`;
+        } else if (language === "tj") {
+          instructions = `
+Шумо консультанти касбии касбӣ ва мутахассиси HR барои вакансияҳои IT ҳастед.
+
+Ба шумо файли PDF бо резюмеи номзад (RESUME_FILE) ва матни тавсифи вакансия (JOB_DESCRIPTION) дода шудааст.
+
+JOB_DESCRIPTION:
+"""
+${jobDescription}
+"""
+
+Вазифа:
+1. Резюмеро аз файл бо эҳтиёт хонда ва онро бо вакансия муқоиса кунед.
+2. Арзёбӣ кунед, ки резюме ба ин вакансияи мушаххас чӣ қадар мутобиқ аст.
+3. Қувваҳои номзадро нисбат ба талабот барҷаста кунед.
+4. Фосилаҳо ва хатарҳои асосиро муайян кунед.
+5. Тавсияҳои мушаххас диҳед, ки чӣ тавр резюмеро барои ин вакансия беҳтар кардан мумкин аст.
+
+Ба забони интерфейси корбар ҷавоб диҳед: тоҷикӣ.
+
+Формати ҷавоб — қатъиан JSON мувофиқи намунаи зерин:
+
+{
+  "overallScore": number,
+  "verdict": string,
+  "matchingSummary": {
+    "hardSkillsScore": number,
+    "softSkillsScore": number,
+    "experienceRelevanceScore": number,
+    "structureClarityScore": number
+  },
+  "matchedKeywords": {
+    "requiredPresent": string[],
+    "requiredMissing": string[],
+    "niceToHavePresent": string[],
+    "niceToHaveMissing": string[]
+  },
+  "criticalGaps": string[],
+  "improvementSuggestions": {
+    "summary": string[],
+    "experience": string[],
+    "skills": string[],
+    "extra": string[]
+  }
+}
+
+Ҳатмӣ:
+- Аз ин намуна берун наравед.
+- Мухтасар, ба мақсад, бе ибораҳои умумӣ нависед.
+- Ба матни воқеии вакансия ва резюме аз файл диққат диҳед.
+`;
+        } else {
+          // Russian (default)
+          instructions = `
 Ты — профессиональный карьерный консультант и HR-специалист по IT-вакансиям.
 
 Тебе передан PDF-файл с резюме кандидата (RESUME_FILE) и текст вакансии (JOB_DESCRIPTION).
@@ -150,7 +331,7 @@ ${jobDescription}
 4. Выявить ключевые пробелы и риски.
 5. Дать конкретные рекомендации, как улучшить резюме именно под эту вакансию.
 
-Отвечай на языке интерфейса пользователя: ${language}.
+Отвечай на языке интерфейса пользователя: русский.
 
 Формат ответа — строго JSON по следующей схеме:
 
@@ -183,11 +364,24 @@ ${jobDescription}
 - Пиши кратко, по делу, без общих фраз.
 - Фокусируйся на реальном тексте вакансии и резюме из файла.
 `;
+        }
 
         const response = await ai.feedback(uploaded.path, instructions);
 
+        // Проверяем на ошибки в ответе
+        if (response && typeof response === "object" && "success" in response && !response.success) {
+          const errorObj = response as any;
+          if (errorObj.error) {
+            const errorMessage = errorObj.error.message || errorObj.error.delegate || "Unknown error";
+            if (errorMessage.includes("usage-limited") || errorMessage.includes("400")) {
+              throw new Error("AI_USAGE_LIMIT_EXCEEDED");
+            }
+            throw new Error(`AI API error: ${errorMessage}`);
+          }
+        }
+
         if (!response || !response.message) {
-          throw new Error("AI не вернул ответ");
+          throw new Error(t("jobs.errors.analysisFailed"));
         }
 
         const content = response.message.content;
@@ -204,13 +398,17 @@ ${jobDescription}
           .replace(/```$/gm, "")
           .trim();
 
-        const analysis = JSON.parse(cleanedText) as JobMatchAnalysisResult;
-        setResult(analysis);
+        try {
+          const analysis = JSON.parse(cleanedText) as JobMatchAnalysisResult;
+          setResult(analysis);
+        } catch (parseError) {
+          console.error("Error parsing AI response:", parseError);
+          console.error("Cleaned text:", cleanedText);
+          throw new Error("Failed to parse AI response. The response may not be valid JSON.");
+        }
       } else {
         if (!selectedStorageKey) {
-          setError(
-            "Выберите резюме из списка созданных, чтобы запустить анализ."
-          );
+          setError(t("jobs.errors.noResumeSelected"));
           return;
         }
 
@@ -219,21 +417,42 @@ ${jobDescription}
         );
 
         if (!selected) {
-          setError(
-            "Не удалось найти выбранное резюме. Попробуйте выбрать другое."
-          );
+          setError(t("jobs.errors.resumeNotFound"));
           return;
         }
 
-        const analysis = await analyzeResumeAgainstJob(job, selected);
+        if (!translatedJob) {
+          setError(t("jobs.errors.analysisFailed"));
+          return;
+        }
+
+        console.log("Analyzing resume against job:", {
+          jobId: translatedJob.id,
+          jobTitle: translatedJob.title,
+          language: i18n.language || "en",
+          resumeId: selected.id || "unknown"
+        });
+        
+        const analysis = await analyzeResumeAgainstJob(translatedJob, selected, i18n.language || "en");
         setResult(analysis);
       }
     } catch (e) {
-      setError(
-        e instanceof Error
-          ? e.message
-          : "Не удалось выполнить анализ. Попробуйте ещё раз."
-      );
+      console.error("Error in handleAnalyzeClick:", e);
+      
+      let errorMessage = t("jobs.errors.analysisFailed");
+      
+      if (e instanceof Error) {
+        // Специальная обработка ошибки лимита использования AI
+        if (e.message === "AI_USAGE_LIMIT_EXCEEDED" || 
+            e.message.includes("usage-limited") || 
+            e.message.includes("Error 400")) {
+          errorMessage = t("jobs.errors.usageLimitExceeded");
+        } else {
+          errorMessage = e.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -242,63 +461,64 @@ ${jobDescription}
   return (
     <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
       <Navbar />
-      <section className="main-section py-12">
-        <div className="mb-6 text-sm">
-          <Link to="/jobs" className="text-primary-600 hover:underline">
-            ← Ко всем вакансиям
+      <section className="main-section py-6 sm:py-8 lg:py-12 px-4 sm:px-6">
+        <div className="mb-4 sm:mb-6 text-sm">
+          <Link to="/jobs" className="text-primary-600 hover:underline inline-flex items-center gap-1">
+            <span>←</span>
+            <span>{t("jobs.backToJobs")}</span>
           </Link>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.5fr)]">
-          <article className="rounded-2xl bg-white/90 p-6 shadow-sm">
-            <h1 className="text-2xl font-semibold">{job.title}</h1>
-            <p className="mt-1 text-gray-700">{job.company}</p>
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.5fr)]">
+          <article className="rounded-2xl bg-white/90 p-4 sm:p-6 shadow-sm">
+            <h1 className="text-base sm:text-lg font-semibold leading-tight">{translatedJob.title}</h1>
+            <p className="mt-1.5 text-xs sm:text-sm text-gray-700">{translatedJob.company}</p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-600">
-              {job.location && (
+              {translatedJob.location && (
                 <span className="rounded-full bg-gray-100 px-3 py-1">
-                  {job.location}
+                  {translatedJob.location}
                 </span>
               )}
-              {job.employmentType && (
+              {translatedJob.employmentType && (
                 <span className="rounded-full bg-primary-50 px-3 py-1 text-primary-700">
-                  {job.employmentType}
+                  {translatedJob.employmentType}
                 </span>
               )}
-              {job.salaryRange && (
+              {translatedJob.salaryRange && (
                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
-                  {job.salaryRange}
+                  {translatedJob.salaryRange}
                 </span>
               )}
             </div>
 
-            <section className="mt-6 space-y-4">
+            <section className="mt-4 sm:mt-6 space-y-4 sm:space-y-5">
               <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                  Описание
+                <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                  {t("jobs.sections.description")}
                 </h2>
-                <p className="mt-2 text-sm text-gray-800">{job.description}</p>
+                <p className="text-xs sm:text-sm text-gray-800 leading-relaxed">{translatedJob.description}</p>
               </div>
 
               <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                  Обязательные требования
+                <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                  {t("jobs.sections.requirements")}
                 </h2>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-800">
-                  {job.requirements.map((req: string) => (
-                    <li key={req}>{req}</li>
+                <ul className="list-disc space-y-1.5 sm:space-y-2 pl-4 sm:pl-5 text-xs sm:text-sm text-gray-800">
+                  {translatedJob.requirements.map((req: string, index: number) => (
+                    <li key={`req-${index}`} className="leading-relaxed">{req}</li>
                   ))}
                 </ul>
               </div>
 
-              {job.niceToHave && job.niceToHave.length > 0 && (
+              {translatedJob.niceToHave && translatedJob.niceToHave.length > 0 && (
                 <div>
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-                    Будет плюсом
+                  <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                    {t("jobs.sections.niceToHave")}
                   </h2>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-800">
-                    {job.niceToHave.map((item: string) => (
-                      <li key={item}>{item}</li>
+                  <ul className="list-disc space-y-1.5 sm:space-y-2 pl-4 sm:pl-5 text-xs sm:text-sm text-gray-800">
+                    {translatedJob.niceToHave.map((item: string, index: number) => (
+                      <li key={`nice-${index}`} className="leading-relaxed">{item}</li>
                     ))}
                   </ul>
                 </div>
@@ -306,87 +526,85 @@ ${jobDescription}
             </section>
           </article>
 
-          <aside className="space-y-4">
-            <div className="relative rounded-2xl bg-white/90 p-6 shadow-sm">
+          <aside className="space-y-4 sm:space-y-6">
+            <div className="relative rounded-2xl bg-white/90 p-4 sm:p-6 shadow-sm">
               {isAnalyzing && (
                 <>
                   <div className="absolute inset-0 rounded-2xl backdrop-blur-sm bg-white/50 z-10" />
                   <div className="absolute inset-0 flex items-center justify-center z-20">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-                      <p className="text-sm font-medium text-gray-700">
-                        Анализируем шансы по этой вакансии...
+                    <div className="flex flex-col items-center gap-3 sm:gap-4">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+                      <p className="text-xs sm:text-sm font-medium text-gray-700">
+                        {t("jobs.analyzing")}
                       </p>
                     </div>
                   </div>
                 </>
               )}
               <div className={isAnalyzing ? "opacity-30 pointer-events-none" : ""}>
-                <h2 className="text-lg font-semibold">Работа с резюме</h2>
-                <p className="mt-2 text-sm text-gray-700">
-                  Вы можете либо создать новое резюме под эту вакансию, либо
-                  оценить свои шансы с уже собранным или сохранённым резюме.
+                <h2 className="text-sm sm:text-base font-semibold">{t("jobs.workWithResume")}</h2>
+                <p className="mt-2 text-xs sm:text-sm text-gray-700 leading-relaxed">
+                  {t("jobs.workWithResumeDescription")}
                 </p>
 
-                <div className="mt-4 rounded-2xl bg-gray-50 p-3 text-xs text-gray-700">
-                  <p className="font-semibold mb-2">Откуда взять резюме для анализа?</p>
-                  <div className="flex gap-2 w-full">
+                <div className="mt-4 rounded-2xl bg-gray-50 p-3 sm:p-4 text-xs sm:text-sm text-gray-700">
+                  <p className="font-semibold mb-2.5 sm:mb-3 text-xs sm:text-sm">{t("jobs.resumeSource")}</p>
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
                     <button
                       type="button"
                       onClick={() => setSelectedSource("upload")}
-                      className={`px-3 py-2 rounded-full border text-xs font-medium transition w-full ${
+                      className={`px-4 py-2.5 rounded-full border text-xs sm:text-sm font-medium transition w-full ${
                         selectedSource === "upload"
                           ? "border-primary-500 bg-white text-primary-700 shadow-sm"
                           : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-white"
                       }`}
                     >
-                      Загрузить PDF
+                      {t("jobs.uploadPDF")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setSelectedSource("saved")}
-                      className={`px-3 py-2 rounded-full border text-xs font-medium transition w-full ${
+                      className={`px-4 py-2.5 rounded-full border text-xs sm:text-sm font-medium transition w-full ${
                         selectedSource === "saved"
                           ? "border-primary-500 bg-white text-primary-700 shadow-sm"
                           : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-white"
                       }`}
                     >
-                      Из сохранённых
+                      {t("jobs.fromSaved")}
                     </button>
                   </div>
                 </div>
 
                 {selectedSource === "upload" && (
-                  <div className="mt-3 space-y-2">
-                    <p className="text-xs text-gray-700">
-                      Загрузите PDF-файл резюме — мы сравним его с этой вакансией и покажем ваши шансы.
+                  <div className="mt-3 sm:mt-4 space-y-2">
+                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                      {t("jobs.uploadPDFDescription")}
                     </p>
                     <FileUploader onFileSelect={setUploadedFile} />
                   </div>
                 )}
 
                 {selectedSource === "saved" && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-3 sm:mt-4 space-y-2">
                     {loadingSaved ? (
-                      <p className="text-xs text-gray-500">
-                        Загружаем список ваших резюме...
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {t("jobs.loadingSaved")}
                       </p>
                     ) : savedResumes.length === 0 ? (
-                      <p className="text-xs text-amber-600">
-                        Пока нет сохранённых резюме нового формата. Создайте резюме на
-                        главной странице и сохраните его.
+                      <p className="text-xs sm:text-sm text-amber-600 leading-relaxed">
+                        {t("jobs.noSavedResumes")}
                       </p>
                     ) : (
                       <>
                         <label
                           htmlFor="saved-resume-select"
-                          className="text-xs font-medium text-gray-700"
+                          className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5"
                         >
-                          Выберите резюме:
+                          {t("jobs.selectResume")}
                         </label>
                         <select
                           id="saved-resume-select"
-                          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs"
+                          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           value={selectedStorageKey || ""}
                           onChange={(e) =>
                             setSelectedStorageKey(
@@ -394,7 +612,7 @@ ${jobDescription}
                             )
                           }
                         >
-                          <option value="">— Не выбрано —</option>
+                          <option value="">{t("jobs.notSelected")}</option>
                           {savedResumes.map((resume) => (
                             <option key={resume.storageKey} value={resume.storageKey}>
                               {resume.fullName || "Без имени"} — {resume.title}
@@ -406,19 +624,19 @@ ${jobDescription}
                   </div>
                 )}
 
-                <div className="mt-4 space-y-3">
+                <div className="mt-4 sm:mt-5 space-y-2">
                   <button
                     type="button"
                     onClick={handleAnalyzeClick}
-                    className="secondary-button w-full justify-center disabled:opacity-60 mt-3"
+                    className="primary-button disabled:opacity-60 disabled:cursor-not-allowed w-full text-sm sm:text-base py-2.5 sm:py-3"
                     disabled={isAnalyzing}
                   >
-                    Оценить мои шансы
+                    {t("jobs.assessChances")}
                   </button>
                 </div>
 
                 {error && (
-                  <p className="mt-3 text-xs text-red-600">
+                  <p className="mt-3 text-xs sm:text-sm text-red-600 leading-relaxed">
                     {error}
                   </p>
                 )}
@@ -426,77 +644,79 @@ ${jobDescription}
             </div>
 
             {result && !isAnalyzing && (
-              <div className="rounded-2xl bg-white/95 p-8 shadow-md">
-                <div className="flex flex-col items-center text-center gap-4">
-                  <ScoreCircle score={result.overallScore} size={140} />
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-semibold text-gray-900">
-                      Оценка соответствия
+              <div className="rounded-2xl bg-white/95 p-4 sm:p-6 lg:p-8 shadow-md">
+                <div className="flex flex-col items-center text-center gap-3 sm:gap-4">
+                  <div className="flex items-center justify-center scale-90 sm:scale-100">
+                    <ScoreCircle score={result.overallScore} size={140} />
+                  </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+                      {t("jobs.matchScore")}
                     </h2>
-                    <p className="text-sm text-gray-700 max-w-md">
+                    <p className="text-xs sm:text-sm text-gray-700 max-w-md leading-relaxed px-2">
                       {result.verdict}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 text-xs">
+                <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-2.5 text-xs">
                   <MetricCard
-                    label="Общий матч"
+                    label={t("jobs.overallMatch")}
                     value={result.overallScore}
                   />
                   <MetricCard
-                    label="Hard skills"
+                    label={t("jobs.hardSkills")}
                     value={result.matchingSummary.hardSkillsScore}
                   />
                   <MetricCard
-                    label="Soft skills"
+                    label={t("jobs.softSkills")}
                     value={result.matchingSummary.softSkillsScore}
                   />
                   <MetricCard
-                    label="Опыт"
+                    label={t("jobs.experience")}
                     value={result.matchingSummary.experienceRelevanceScore}
                   />
                   <MetricCard
-                    label="Структура"
+                    label={t("jobs.structure")}
                     value={result.matchingSummary.structureClarityScore}
                   />
                 </div>
 
                 {result.criticalGaps.length > 0 && (
-                  <div className="mt-5 rounded-xl border-2 border-red-500 bg-gradient-to-br from-red-50 to-red-100/50 p-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wide text-red-700 mb-3 flex items-center gap-2">
+                  <div className="mt-4 sm:mt-6 rounded-xl border-2 border-red-500 bg-gradient-to-br from-red-50 to-red-100/50 p-3 sm:p-4">
+                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-red-700 mb-2.5 sm:mb-3 flex items-center gap-1.5">
                       <span className="text-red-600">⚠️</span>
-                      Критические пробелы
+                      {t("jobs.criticalGaps")}
                     </h3>
-                    <ul className="space-y-2 text-xs text-red-800">
+                    <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-red-800">
                       {result.criticalGaps.map((gap) => (
-                        <li key={gap} className="flex items-start gap-2">
-                          <span className="text-red-600 mt-0.5">•</span>
-                          <span>{gap}</span>
+                        <li key={gap} className="flex items-start gap-1.5">
+                          <span className="text-red-600 mt-0.5 flex-shrink-0">•</span>
+                          <span className="leading-relaxed">{gap}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
 
-                <div className="mt-5 space-y-4">
+                <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
                   <SuggestionBlock
-                    title="Summary / О себе"
+                    title={t("jobs.summary")}
                     items={result.improvementSuggestions.summary}
                     type="warning"
                   />
                   <SuggestionBlock
-                    title="Опыт"
+                    title={t("jobs.experience")}
                     items={result.improvementSuggestions.experience}
                     type="info"
                   />
                   <SuggestionBlock
-                    title="Навыки"
+                    title={t("jobs.skills")}
                     items={result.improvementSuggestions.skills}
                     type="info"
                   />
                   <SuggestionBlock
-                    title="Дополнительно"
+                    title={t("jobs.extra")}
                     items={result.improvementSuggestions.extra}
                     type="success"
                   />
@@ -523,10 +743,10 @@ interface MetricCardProps {
 
 function MetricCard({ label, value }: MetricCardProps) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-3 space-y-2">
-      <p className="text-[0.75rem] font-medium text-gray-600">{label}</p>
+    <div className="rounded-xl border border-gray-100 bg-gray-50 px-2 sm:px-2.5 py-2 sm:py-2.5 space-y-1 sm:space-y-1.5">
+      <p className="text-[0.65rem] sm:text-[0.7rem] font-medium text-gray-600">{label}</p>
       <ScoreBar value={value} />
-      <p className="text-xs font-semibold text-gray-900">
+      <p className="text-[0.65rem] sm:text-[0.7rem] font-semibold text-gray-900">
         {Math.round(value)}%
       </p>
     </div>
@@ -572,16 +792,16 @@ function SuggestionBlock({ title, items, type = "info" }: SuggestionBlockProps) 
   const style = styles[type];
 
   return (
-    <div className={`rounded-xl border-2 ${style.border} ${style.bg} p-4`}>
-      <h3 className={`text-sm font-bold uppercase tracking-wide ${style.title} mb-3 flex items-center gap-2`}>
+    <div className={`rounded-xl border-2 ${style.border} ${style.bg} p-3 sm:p-4`}>
+      <h3 className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${style.title} mb-2.5 sm:mb-3 flex items-center gap-1.5`}>
         <span>{style.icon}</span>
         {title}
       </h3>
-      <ul className="space-y-2 text-xs">
+      <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
         {items.map((item) => (
-          <li key={item} className={`flex items-start gap-2 ${style.text}`}>
-            <span className={`${style.bullet} mt-0.5`}>•</span>
-            <span>{item}</span>
+          <li key={item} className={`flex items-start gap-1.5 ${style.text}`}>
+            <span className={`${style.bullet} mt-0.5 flex-shrink-0`}>•</span>
+            <span className="leading-relaxed">{item}</span>
           </li>
         ))}
       </ul>
